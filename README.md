@@ -1,4 +1,5 @@
-# Terraform Module Template
+This module creates all the Snowflake resources required for WIF.
+<!-- # Terraform Module Template
 
 [![Terraform Validation](https://github.com/Snowflake-Applied-Field-Engineering/terraform-module-template/actions/workflows/terraform-validate.yml/badge.svg)](https://github.com/Snowflake-Applied-Field-Engineering/terraform-module-template/actions/workflows/terraform-validate.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -203,4 +204,4 @@ For questions, issues, or contributions, please:
 
 ---
 
-**Note**: This is a template repository. Replace this content with your module's specific documentation.
+**Note**: This is a template repository. Replace this content with your module's specific documentation. -->
