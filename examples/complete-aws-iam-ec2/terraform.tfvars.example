@@ -1,0 +1,10 @@
+
+## AWS Variables
+key_name  = "REPLACE_ME"
+subnet_id = "REPLACE_ME"
+vpc_id    = "REPLACE_ME"
+
+## Snowflake Variables
+snowflake_account_name      = "REPLACE_ME"
+snowflake_organization_name = "REPLACE_ME"
+wif_test_database           = "REPLACE_ME"

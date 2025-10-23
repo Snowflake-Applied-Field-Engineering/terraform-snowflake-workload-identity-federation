@@ -1,3 +1,7 @@
+################################################################################
+# Locals
+################################################################################
+
 locals {
   wi_sql_aws = var.csp == "aws" ? (<<EOT
     TYPE = AWS
@@ -20,10 +24,8 @@ EOT
   workload_identity_sql_string = var.csp == "aws" ? local.wi_sql_aws : (var.csp == "azure" ? local.wi_sql_azure : (var.csp == "gcp" ? local.wi_sql_gcp : null))
 }
 
-
-
 ################################################################################
-# snowflake.tf — WIF role, user, and grants
+# Snowflake Resources
 ################################################################################
 
 # 1) Create the WIF test role in Snowflake
