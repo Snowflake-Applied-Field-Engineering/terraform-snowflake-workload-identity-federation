@@ -1,4 +1,7 @@
-# Basic Example
+# Example: AWS with Existing IAM Role
+
+This example shows how to configure an existing AWS role for WIF in Snowflake.
+<!-- # Basic Example
 
 This example demonstrates the basic usage of the Terraform module.
 
@@ -68,4 +71,4 @@ This example creates:
 | Name | Description |
 |------|-------------|
 | id | The ID of the created resource |
-| name | The name of the created resource |
+| name | The name of the created resource | -->

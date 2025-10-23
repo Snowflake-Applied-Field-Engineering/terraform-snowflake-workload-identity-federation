@@ -35,5 +35,20 @@
 #     ManagedBy   = "terraform"
 #   }
 # }
+################################################################################
+# Module
+################################################################################
+module "wif_aws" {
 
-# Add your basic example here
+  # Add your basic example here
+  source = "../../"
+
+  csp          = "aws"
+  aws_role_arn = var.aws_role_arn
+
+  wif_default_warehouse = var.wif_default_warehouse
+  wif_role_name         = var.wif_role_name
+  wif_test_database     = var.wif_test_database
+  wif_test_schema       = var.wif_test_schema
+  wif_user_name         = var.wif_user_name
+}
