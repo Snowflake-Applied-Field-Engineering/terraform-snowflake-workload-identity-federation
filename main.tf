@@ -1,18 +1,21 @@
 locals {
-  wi_sql_aws = <<EOT
+  wi_sql_aws = var.csp == "aws" ? (<<EOT
     TYPE = AWS
     ARN  = '${var.aws_role_arn}'
   EOT
+  ) : null
 
-  wi_sql_azure = <<EOT
+  wi_sql_azure = var.csp == "azure" ? (<<EOT
     TYPE = AZURE
     AZURE_TENANT_ID = '${var.azure_tenant_id}'
     AZURE_APPLICATION_ID = '${var.azure_sp_id}'
-  EOT
+EOT
+  ) : null
 
-  wi_sql_gcp = <<EOT
+  wi_sql_gcp = var.csp == "gcp" ? (<<EOT
   #! TODO
   EOT
+  ) : null
 
   workload_identity_sql_string = var.csp == "aws" ? local.wi_sql_aws : (var.csp == "azure" ? local.wi_sql_azure : (var.csp == "gcp" ? local.wi_sql_gcp : null))
 }
@@ -44,7 +47,8 @@ resource "snowflake_execute" "wif_user_create" {
 CREATE USER IF NOT EXISTS ${var.wif_user_name}
   TYPE = SERVICE
   DEFAULT_ROLE = ${snowflake_account_role.wif_test_role.name}
-  WORKLOAD_IDENTITY = ${local.workload_identity_sql_string}
+  WORKLOAD_IDENTITY = (
+  ${local.workload_identity_sql_string})
   COMMENT = 'WIF service user (AWS role mapped) managed by Terraform';
 SQL
 
