@@ -82,12 +82,14 @@ module "aws_iam_role" {
 module "snowflake_wif_role" {
   source = "../../"
 
-  wif_test_database     = var.wif_test_database
-  wif_role_name         = upper("${var.name_prefix}_ROLE")
-  wif_user_name         = upper("${var.name_prefix}_USER")
+  csp          = "aws"
+  aws_role_arn = module.aws_iam_role.arn
+
   wif_default_warehouse = var.wif_default_warehouse
+  wif_role_name         = upper("${var.name_prefix}_ROLE")
+  wif_test_database     = var.wif_test_database
   wif_test_schema       = var.wif_test_schema
-  aws_role_arn          = module.aws_iam_role.arn
+  wif_user_name         = upper("${var.name_prefix}_USER")
 }
 
 module "ec2_instance" {

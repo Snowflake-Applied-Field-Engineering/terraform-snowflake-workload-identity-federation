@@ -41,7 +41,9 @@
 module "wif_aws" {
 
   # Add your basic example here
-  source = "../../" # TODO Because examples will often be copied into other repositories for customization, any module blocks should have their source set to the address an external caller would use, not to a relative path.  https://developer.hashicorp.com/terraform/language/modules/develop/structure
+  source = "../../"
+  # TODO Because examples will often be copied into other repositories for customization, any module blocks should have their source set to the address an external caller would use, not to a relative path.  https://developer.hashicorp.com/terraform/language/modules/develop/structure. BUT!
+  # ! BUT this will break github actions as it will always test the old version
 
   #   source = "./modules/wif-aws-iam"
   #   source = "git::https://github.com/Snowflake-Applied-Field-Engineering/terraform-snowflake-workload-identity-federation.git?ref=init"
