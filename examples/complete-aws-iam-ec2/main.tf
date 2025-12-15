@@ -1,4 +1,3 @@
-
 ################################################################################
 # Locals
 ################################################################################
@@ -87,9 +86,27 @@ module "snowflake_wif_role" {
 
   wif_default_warehouse = var.wif_default_warehouse
   wif_role_name         = upper("${var.name_prefix}_ROLE")
-  wif_test_database     = var.wif_test_database
-  wif_test_schema       = var.wif_test_schema
   wif_user_name         = upper("${var.name_prefix}_USER")
+
+  # Replace EXAMPLE_DB, EXAMPLE_SCHEMA, and EXAMPLE_WAREHOUSE with your database, schema, and warehouse names.
+  # Optionally modify the granted permissions.
+  wif_role_custom_permissions = {
+    my_db = {
+      type        = "database"
+      name        = var.wif_test_database
+      permissions = ["USAGE"]
+    }
+    my_schema = {
+      type        = "schema"
+      name        = "${var.wif_test_database}.${var.wif_test_schema}"
+      permissions = ["USAGE"]
+    }
+    my_warehouse = {
+      type        = "warehouse"
+      name        = var.wif_default_warehouse
+      permissions = ["USAGE"]
+    }
+  }
 }
 
 module "ec2_instance" {

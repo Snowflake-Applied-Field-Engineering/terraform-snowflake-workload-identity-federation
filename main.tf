@@ -1,3 +1,9 @@
+# TODO
+# * remove the word "test" from everywhere in the codebase
+# * add outputs
+# * allow for custom permissions for db/schema/warehouse
+# * allow for network policy to be applied to the WIF user
+
 ################################################################################
 # Locals
 ################################################################################
@@ -29,18 +35,18 @@ EOT
 ################################################################################
 
 # 1) Create the WIF test role in Snowflake
-resource "snowflake_account_role" "wif_test_role" {
+resource "snowflake_account_role" "wif" {
   name    = var.wif_role_name
   comment = "Role for AWS→Snowflake WIF test user (Terraform-managed)"
 }
 
 # 2) Create the WIF service user via exact SQL (TYPE=SERVICE + WORKLOAD_IDENTITY)
 #    We use snowflake_execute because the snowflake_user resource does not yet
-#    expose WORKLOAD_IDENTITY/TYPE=SERVICE as first-class arguments.
+#    (as Oct 2025) expose WORKLOAD_IDENTITY/TYPE=SERVICE as first-class arguments.
 resource "snowflake_execute" "wif_user_create" {
   # Ensure the role exists and the AWS role ARN is resolved first
   depends_on = [
-    snowflake_account_role.wif_test_role
+    snowflake_account_role.wif
   ]
 
   # CREATE (idempotent), VERIFY (query), and DESTROY (revert)
@@ -48,10 +54,10 @@ resource "snowflake_execute" "wif_user_create" {
   execute = <<SQL
 CREATE USER IF NOT EXISTS ${var.wif_user_name}
   TYPE = SERVICE
-  DEFAULT_ROLE = ${snowflake_account_role.wif_test_role.name}
+  DEFAULT_ROLE = ${snowflake_account_role.wif.name}
   WORKLOAD_IDENTITY = (
   ${local.workload_identity_sql_string})
-  COMMENT = 'WIF service user (AWS role mapped) managed by Terraform';
+  COMMENT = 'WIF service user mapped to role/service principal in ${var.csp}. Managed by Terraform.';
 SQL
 
   # Optional visibility during plan/apply
@@ -63,7 +69,7 @@ SQL
 
 # 3) Grant the WIF role to the WIF user
 resource "snowflake_grant_account_role" "wif_role_to_user" {
-  role_name  = snowflake_account_role.wif_test_role.name
+  role_name  = snowflake_account_role.wif.name
   user_name  = var.wif_user_name
   depends_on = [snowflake_execute.wif_user_create]
 }
@@ -73,7 +79,7 @@ resource "snowflake_grant_account_role" "wif_role_to_user" {
 
 resource "snowflake_grant_privileges_to_account_role" "wif_wh_usage" {
   count             = var.wif_default_warehouse == null ? 0 : 1
-  account_role_name = snowflake_account_role.wif_test_role.name
+  account_role_name = snowflake_account_role.wif.name
   privileges        = ["USAGE"]
   on_account_object {
     object_type = "WAREHOUSE"
@@ -83,7 +89,7 @@ resource "snowflake_grant_privileges_to_account_role" "wif_wh_usage" {
 
 resource "snowflake_grant_privileges_to_account_role" "wif_db_usage" {
   count             = var.wif_test_database == null ? 0 : 1
-  account_role_name = snowflake_account_role.wif_test_role.name
+  account_role_name = snowflake_account_role.wif.name
   privileges        = ["USAGE"]
   on_account_object {
     object_type = "DATABASE"
@@ -93,9 +99,29 @@ resource "snowflake_grant_privileges_to_account_role" "wif_db_usage" {
 
 resource "snowflake_grant_privileges_to_account_role" "wif_schema_usage" {
   count             = var.wif_test_schema == null ? 0 : 1
-  account_role_name = snowflake_account_role.wif_test_role.name
+  account_role_name = snowflake_account_role.wif.name
   privileges        = ["USAGE"]
   on_schema {
     schema_name = "${var.wif_test_database}.${var.wif_test_schema}"
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "wif_role_custom_permissions" {
+  for_each          = var.wif_role_custom_permissions
+  account_role_name = snowflake_account_role.wif.name
+  privileges        = each.value.permissions
+
+  dynamic "on_account_object" { # database or warehouse
+    for_each = upper(each.value.type) == "DATABASE" || upper(each.value.type) == "WAREHOUSE" ? [1] : []
+    content {
+      object_type = upper(each.value.type)
+      object_name = each.value.name
+    }
+  }
+  dynamic "on_schema" {
+    for_each = upper(each.value.type) == "SCHEMA" ? [1] : []
+    content {
+      schema_name = each.value.name
+    }
   }
 }
