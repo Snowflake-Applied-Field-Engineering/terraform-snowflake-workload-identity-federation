@@ -34,44 +34,33 @@ EOT
 # Snowflake Resources
 ################################################################################
 
-# 1) Create the WIF test role in Snowflake
+# Create the WIF role and user in Snowflake
 resource "snowflake_account_role" "wif" {
   name    = var.wif_role_name
   comment = "Role for AWS→Snowflake WIF test user (Terraform-managed)"
 }
 
-# 2) Create the WIF service user via exact SQL (TYPE=SERVICE + WORKLOAD_IDENTITY)
-#    We use snowflake_execute because the snowflake_user resource does not yet
-#    (as Oct 2025) expose WORKLOAD_IDENTITY/TYPE=SERVICE as first-class arguments.
-resource "snowflake_execute" "wif_user_create" {
-  # Ensure the role exists and the AWS role ARN is resolved first
-  depends_on = [
-    snowflake_account_role.wif
-  ]
-
-  # CREATE (idempotent), VERIFY (query), and DESTROY (revert)
-  # Note: LOGIN_NAME is not needed for WIF users - authentication is via WORKLOAD_IDENTITY
-  execute = <<SQL
-CREATE USER IF NOT EXISTS ${var.wif_user_name}
-  TYPE = SERVICE
-  DEFAULT_ROLE = ${snowflake_account_role.wif.name}
-  WORKLOAD_IDENTITY = (
-  ${local.workload_identity_sql_string})
-  COMMENT = 'WIF service user mapped to role/service principal in ${var.csp}. Managed by Terraform.';
-SQL
-
-  # Optional visibility during plan/apply
-  query = "SHOW USERS LIKE '${var.wif_user_name}';"
-
-  # Clean removal on destroy
-  revert = "DROP USER IF EXISTS ${var.wif_user_name};"
+resource "snowflake_service_user" "wif" {
+  name         = var.wif_user_name
+  comment      = "WIF service user mapped to role/service principal in ${var.csp}. Managed by Terraform."
+  default_role = snowflake_account_role.wif.name
+  # TODO: Once supported, add workload_identity here instead of using snowflake_execute below
 }
 
-# 3) Grant the WIF role to the WIF user
+# WORKLOAD_IDENTITY not supported in service_user resource as of provider v2.12, so we use execute
+resource "snowflake_execute" "wif_workload_identity" {
+  execute = <<SQL
+ALTER USER ${var.wif_user_name} SET WORKLOAD_IDENTITY = (
+  ${local.workload_identity_sql_string})
+SQL
+
+  revert = "ALTER USER ${var.wif_user_name} UNSET WORKLOAD_IDENTITY;"
+}
+
+# Grant the WIF role to the service user
 resource "snowflake_grant_account_role" "wif_role_to_user" {
-  role_name  = snowflake_account_role.wif.name
-  user_name  = var.wif_user_name
-  depends_on = [snowflake_execute.wif_user_create]
+  role_name = snowflake_account_role.wif.name
+  user_name = snowflake_service_user.wif.name
 }
 
 # --- Optional: minimal usage grants so the user can run a quick query ---
