@@ -37,7 +37,7 @@ EOT
 # Create the WIF role and user in Snowflake
 resource "snowflake_account_role" "wif" {
   name    = var.wif_role_name
-  comment = "Role for AWS→Snowflake WIF test user (Terraform-managed)"
+  comment = "Role for WIF Access to Snowflake. Managed by Terraform."
 }
 
 resource "snowflake_service_user" "wif" {
@@ -55,6 +55,8 @@ ALTER USER ${var.wif_user_name} SET WORKLOAD_IDENTITY = (
 SQL
 
   revert = "ALTER USER ${var.wif_user_name} UNSET WORKLOAD_IDENTITY;"
+
+  depends_on = [snowflake_service_user.wif] # needed because passing in var above, not resource
 }
 
 # Grant the WIF role to the service user
