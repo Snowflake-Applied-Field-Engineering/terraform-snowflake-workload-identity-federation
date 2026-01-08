@@ -1,7 +1,7 @@
 # TODO
 # * remove the word "test" from everywhere in the codebase
 # * allow for network policy to be applied to the WIF user
-# * TEST FOR GCP (completely untested) and AZURE (which I changed to match the docs https://docs.snowflake.com/en/sql-reference/sql/alter-user)
+# * TEST FOR OIDC (completely untested), GCP (completely untested) and AZURE (which I changed to match the docs https://docs.snowflake.com/en/sql-reference/sql/alter-user)
 
 ################################################################################
 # Locals
@@ -10,26 +10,34 @@
 locals {
   ## Define the workload identity SQL string for each CSP
   # This is needed because the service_user resource does not yet support WORKLOAD_IDENTITY
-  wi_sql_aws = var.csp == "aws" ? (<<EOT
+  wi_sql_aws = var.wif_type == "aws" ? (<<EOT
     TYPE = AWS
     ARN  = '${var.aws_role_arn}'
   EOT
   ) : null
 
-  wi_sql_azure = var.csp == "azure" ? (<<EOT
+  wi_sql_azure = var.wif_type == "azure" ? (<<EOT
     TYPE = AZURE
     ISSUER = 'https://login.microsoftonline.com/${var.azure_tenant_id}/v2.0'
     SUBJECT = '${var.azure_service_principal_id}'
 EOT
   ) : null
 
-  wi_sql_gcp = var.csp == "gcp" ? (<<EOT
+  wi_sql_gcp = var.wif_type == "gcp" ? (<<EOT
     TYPE = GCP
     SUBJECT = '${var.gcp_service_account_id}'
   EOT
   ) : null
 
-  workload_identity_sql_string = var.csp == "aws" ? local.wi_sql_aws : (var.csp == "azure" ? local.wi_sql_azure : (var.csp == "gcp" ? local.wi_sql_gcp : null))
+  wi_sql_oidc = var.wif_type == "oidc" ? (<<EOT
+    TYPE = OIDC
+    ISSUER = '${var.oidc_issuer_url}'
+    SUBJECT = '${var.oidc_subject}'
+    AUDIENCE_LIST = (${join(", ", [for aud in var.oidc_audience_list : "'${aud}'"])})
+  EOT
+  ) : null
+
+  workload_identity_sql_string = var.wif_type == "aws" ? local.wi_sql_aws : (var.wif_type == "azure" ? local.wi_sql_azure : (var.wif_type == "gcp" ? local.wi_sql_gcp : (var.wif_type == "oidc" ? local.wi_sql_oidc : null)))
 }
 
 ################################################################################
@@ -44,7 +52,7 @@ resource "snowflake_account_role" "wif" {
 
 resource "snowflake_service_user" "wif" {
   name         = var.wif_user_name
-  comment      = "WIF service user mapped to role/service principal in ${var.csp}. Managed by Terraform."
+  comment      = "WIF service user mapped to a specific principal in the source system (${var.wif_type}). Managed by Terraform."
   default_role = snowflake_account_role.wif.name
   # TODO: Once supported, add workload_identity here instead of using snowflake_execute below
 }

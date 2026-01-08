@@ -2,13 +2,13 @@
 # General
 ################################################################################
 
-variable "csp" {
-  description = "The Cloud Service Provider (CSP) to create the WIF identity for."
+variable "wif_type" {
+  description = "The type of WIF identity to create. Must be one of: aws, azure, gcp, oidc."
   type        = string
   default     = "aws"
   validation {
-    condition     = contains(["aws", "azure", "gcp"], var.csp)
-    error_message = "Invalid CSP: ${var.csp}. Valid values are: aws, azure, gcp."
+    condition     = contains(["aws", "azure", "gcp", "oidc"], var.wif_type)
+    error_message = "Invalid WIF type: ${var.wif_type}. Valid values are: aws, azure, gcp, oidc."
   }
 }
 
