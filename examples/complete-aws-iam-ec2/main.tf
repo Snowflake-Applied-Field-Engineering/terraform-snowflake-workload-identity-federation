@@ -81,7 +81,7 @@ module "aws_iam_role" {
 module "snowflake_wif_role" {
   source = "../../"
 
-  csp          = "aws"
+  wif_type     = "aws"
   aws_role_arn = module.aws_iam_role.arn
 
   wif_default_warehouse = var.wif_default_warehouse

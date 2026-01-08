@@ -4,7 +4,7 @@ module "wif_aws" {
   # Update aws_role_arn and wif_default_warehouse (must already exist!)
   # Optionally update wif_role_name and wif_user_name to change how the new resources are named.
 
-  csp          = "aws"
+  wif_type     = "aws"
   aws_role_arn = "arn:aws:iam::123456789012:role/example-ec2-role-with-instance-profile"
 
   wif_default_warehouse = "EXAMPLE_WAREHOUSE"

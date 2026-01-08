@@ -52,7 +52,7 @@ resource "snowflake_account_role" "wif" {
 
 resource "snowflake_service_user" "wif" {
   name         = var.wif_user_name
-  comment      = "WIF service user mapped to a specific principal in the source system (${var.wif_type}). Managed by Terraform."
+  comment      = "User for WIF access to Snowflake. Managed by Terraform."
   default_role = snowflake_account_role.wif.name
   # TODO: Once supported, add workload_identity here instead of using snowflake_execute below
 }

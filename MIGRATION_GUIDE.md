@@ -10,12 +10,13 @@ Note that this guide focuses on this Terraform module. If you choose to upgrade 
 
 ### Breaking Changes
 
-1. Creation of the Snowflake Service User used by WIF is now handled by the `snowflake_service_user` resource,instead of `snowflake_execute`.
+1. Creation of the Snowflake Service User used by WIF is now handled by the `snowflake_service_user` resource, instead of `snowflake_execute`.
    - To ensure proper upgrade, you **MUST**:
      - Remove `snowflake_execute.wif_user_create` from your state (or your existing user will be **deleted**)
      - Import your existing user to your state file
    - Reason: we now use the `snowflake_service_user` resource to create the actual user, and only use `snowflake_execute` to `SET WORKLOAD_IDENTITY` on the user (as this isn't currently supported natively by the provider). While this causes pain now, this will be needed eventually and should help ease future migrations once `snowflake_service_user` supports setting workload_identity natively.
 1. The default value for several variables has changed! If you don't explicitly pass in values, you may see proposed drift during `terraform plan`.
+1. The variable `var.csp` has been renamed to `var.wif_type`.
 
 ### Other Notes
 
