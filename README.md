@@ -8,6 +8,7 @@ This module provides a composable method to configure Workload Identity Federati
 ## Terraform Technical Documentation
 
 <!-- BEGIN_TF_DOCS -->
+
 <!-- END_TF_DOCS -->
 
 ## Development
