@@ -1,14 +1,15 @@
 # TODO
 # * remove the word "test" from everywhere in the codebase
-# * add outputs
-# * allow for custom permissions for db/schema/warehouse
 # * allow for network policy to be applied to the WIF user
+# * TEST FOR GCP (completely untested) and AZURE (which I changed to match the docs https://docs.snowflake.com/en/sql-reference/sql/alter-user)
 
 ################################################################################
 # Locals
 ################################################################################
 
 locals {
+  ## Define the workload identity SQL string for each CSP
+  # This is needed because the service_user resource does not yet support WORKLOAD_IDENTITY
   wi_sql_aws = var.csp == "aws" ? (<<EOT
     TYPE = AWS
     ARN  = '${var.aws_role_arn}'
@@ -17,13 +18,14 @@ locals {
 
   wi_sql_azure = var.csp == "azure" ? (<<EOT
     TYPE = AZURE
-    AZURE_TENANT_ID = '${var.azure_tenant_id}'
-    AZURE_APPLICATION_ID = '${var.azure_sp_id}'
+    ISSUER = 'https://login.microsoftonline.com/${var.azure_tenant_id}/v2.0'
+    SUBJECT = '${var.azure_service_principal_id}'
 EOT
   ) : null
 
   wi_sql_gcp = var.csp == "gcp" ? (<<EOT
-  #! TODO
+    TYPE = GCP
+    SUBJECT = '${var.gcp_service_account_id}'
   EOT
   ) : null
 
@@ -49,6 +51,7 @@ resource "snowflake_service_user" "wif" {
 
 # WORKLOAD_IDENTITY not supported in service_user resource as of provider v2.12, so we use execute
 resource "snowflake_execute" "wif_workload_identity" {
+  # ALTER USER ${snowflake_service_user.wif.login_name} SET WORKLOAD_IDENTITY = ( ## may be sensitive????
   execute = <<SQL
 ALTER USER ${var.wif_user_name} SET WORKLOAD_IDENTITY = (
   ${local.workload_identity_sql_string})
