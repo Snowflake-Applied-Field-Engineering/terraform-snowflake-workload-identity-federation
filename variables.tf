@@ -26,8 +26,8 @@ variable "wif_user_name" {
   type        = string
 }
 
-variable "wif_default_warehouse" {
-  description = "Default warehouse for the WIF test user/role (must exist)"
+variable "wif_user_default_warehouse" {
+  description = "(Optional) Default warehouse for the WIF service user. Must already exist if provided (not validated by module)."
   type        = string
   default     = null
 }

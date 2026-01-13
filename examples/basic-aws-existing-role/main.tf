@@ -7,9 +7,9 @@ module "wif_aws" {
   wif_type     = "aws"
   aws_role_arn = "arn:aws:iam::123456789012:role/example-ec2-role-with-instance-profile"
 
-  wif_default_warehouse = "EXAMPLE_WAREHOUSE"
-  wif_role_name         = "WIF_EXAMPLE_AWS_ROLE"
-  wif_user_name         = "WIF_EXAMPLE_AWS_USER"
+  wif_role_name              = "WIF_EXAMPLE_AWS_ROLE"
+  wif_user_name              = "WIF_EXAMPLE_AWS_USER"
+  wif_user_default_warehouse = "EXAMPLE_WAREHOUSE"
 
   # Replace EXAMPLE_DB, EXAMPLE_SCHEMA, and EXAMPLE_WAREHOUSE with your database, schema, and warehouse names.
   # Optionally modify the granted permissions.

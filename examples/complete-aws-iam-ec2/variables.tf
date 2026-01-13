@@ -60,8 +60,8 @@ variable "snowflake_organization_name" {
   type        = string
 }
 
-variable "wif_default_warehouse" {
-  description = "Default warehouse for the WIF test user/role (must exist)"
+variable "wif_test_warehouse" {
+  description = "Warehouse for the WIF test user/role (must exist)"
   type        = string
   default     = null
 }

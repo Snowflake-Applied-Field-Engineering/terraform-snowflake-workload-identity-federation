@@ -54,9 +54,9 @@ TODO - update above for accuracy
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Subnet ID for the test instance (private subnet recommended with SSM access) | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Map of tags to apply to all AWS resources | `map(string)` | `{}` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | Existing VPC ID where the test instance will run | `string` | n/a | yes |
-| <a name="input_wif_default_warehouse"></a> [wif\_default\_warehouse](#input\_wif\_default\_warehouse) | Default warehouse for the WIF test user/role (must exist) | `string` | `null` | no |
 | <a name="input_wif_test_database"></a> [wif\_test\_database](#input\_wif\_test\_database) | Database to test privileges of the WIF test user/role(must exist) | `string` | `null` | no |
 | <a name="input_wif_test_schema"></a> [wif\_test\_schema](#input\_wif\_test\_schema) | Schema to test privileges of the WIF test user/role(must exist) | `string` | `null` | no |
+| <a name="input_wif_test_warehouse"></a> [wif\_test\_warehouse](#input\_wif\_test\_warehouse) | Warehouse for the WIF test user/role (must exist) | `string` | `null` | no |
 
 ## Outputs
 

@@ -33,7 +33,6 @@ No modules.
 | [snowflake_execute.wif_workload_identity](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/resources/execute) | resource |
 | [snowflake_grant_account_role.wif_role_to_user](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/resources/grant_account_role) | resource |
 | [snowflake_grant_privileges_to_account_role.wif_role_permissions](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/resources/grant_privileges_to_account_role) | resource |
-| [snowflake_grant_privileges_to_account_role.wif_wh_usage](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/resources/grant_privileges_to_account_role) | resource |
 | [snowflake_service_user.wif](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/resources/service_user) | resource |
 
 ## Inputs
@@ -47,10 +46,10 @@ No modules.
 | <a name="input_oidc_audience_list"></a> [oidc\_audience\_list](#input\_oidc\_audience\_list) | Specifies which values must be present in the aud claim of the ID token issued by the OIDC provider. Snowflake accepts the attestation if the aud claim contains at least one of the specified audiences. | `list(string)` | <pre>[<br/>  "snowflakecomputing.com"<br/>]</pre> | no |
 | <a name="input_oidc_issuer_url"></a> [oidc\_issuer\_url](#input\_oidc\_issuer\_url) | The OpenID Connect (OIDC) issuer URL. | `string` | `null` | no |
 | <a name="input_oidc_subject"></a> [oidc\_subject](#input\_oidc\_subject) | The identifier of the workload that is connecting to Snowflake. The format of the value is specific to the OIDC provider that is issuing the attestation. | `string` | `null` | no |
-| <a name="input_wif_default_warehouse"></a> [wif\_default\_warehouse](#input\_wif\_default\_warehouse) | Default warehouse for the WIF test user/role (must exist) | `string` | `null` | no |
 | <a name="input_wif_role_name"></a> [wif\_role\_name](#input\_wif\_role\_name) | Name of the Snowflake role to create for WIF. | `string` | n/a | yes |
 | <a name="input_wif_role_permissions"></a> [wif\_role\_permissions](#input\_wif\_role\_permissions) | A map of objects describing the custom permissions to grant to the WIF role. Note that for schemas, the name must be in DATABASE.SCHEMA format. | <pre>map(object({<br/>    type        = string       # one of "database", "schema", "warehouse"<br/>    name        = string       # name of the database, schema, or warehouse. Schema must be in DB.SCHEMA format.<br/>    permissions = list(string) # list of permissions to grant<br/>  }))</pre> | `{}` | no |
 | <a name="input_wif_type"></a> [wif\_type](#input\_wif\_type) | The type of WIF identity to create. Must be one of: aws, azure, gcp, oidc. | `string` | `"aws"` | no |
+| <a name="input_wif_user_default_warehouse"></a> [wif\_user\_default\_warehouse](#input\_wif\_user\_default\_warehouse) | (Optional) Default warehouse for the WIF service user. Must already exist if provided (not validated by module). | `string` | `null` | no |
 | <a name="input_wif_user_name"></a> [wif\_user\_name](#input\_wif\_user\_name) | Name of the Snowflake Service User to create for WIF. | `string` | n/a | yes |
 
 ## Outputs

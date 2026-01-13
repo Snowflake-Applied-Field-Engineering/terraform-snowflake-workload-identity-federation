@@ -1,5 +1,4 @@
 # TODO
-# * remove the word "test" from everywhere in the codebase
 # * allow for network policy to be applied to the WIF user
 # * TEST FOR OIDC (completely untested), GCP (completely untested) and AZURE (which I changed to match the docs https://docs.snowflake.com/en/sql-reference/sql/alter-user)
 
@@ -51,9 +50,10 @@ resource "snowflake_account_role" "wif" {
 }
 
 resource "snowflake_service_user" "wif" {
-  name         = var.wif_user_name
-  comment      = "User for WIF access to Snowflake. Managed by Terraform."
-  default_role = snowflake_account_role.wif.name
+  name              = var.wif_user_name
+  comment           = "User for WIF access to Snowflake. Managed by Terraform."
+  default_role      = snowflake_account_role.wif.name
+  default_warehouse = var.wif_user_default_warehouse
   # TODO: Once supported, add workload_identity here instead of using snowflake_execute below
 }
 
@@ -79,15 +79,15 @@ resource "snowflake_grant_account_role" "wif_role_to_user" {
 # --- Optional: minimal usage grants so the user can run a quick query ---
 # Guard each with count so nulls skip creation.
 
-resource "snowflake_grant_privileges_to_account_role" "wif_wh_usage" {
-  count             = var.wif_default_warehouse == null ? 0 : 1
-  account_role_name = snowflake_account_role.wif.name
-  privileges        = ["USAGE"]
-  on_account_object {
-    object_type = "WAREHOUSE"
-    object_name = var.wif_default_warehouse
-  }
-}
+# resource "snowflake_grant_privileges_to_account_role" "wif_wh_usage" {
+#   count             = var.wif_default_warehouse == null ? 0 : 1
+#   account_role_name = snowflake_account_role.wif.name
+#   privileges        = ["USAGE"]
+#   on_account_object {
+#     object_type = "WAREHOUSE"
+#     object_name = var.wif_default_warehouse
+#   }
+# }
 
 resource "snowflake_grant_privileges_to_account_role" "wif_role_permissions" {
   for_each          = var.wif_role_permissions
