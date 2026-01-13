@@ -1,6 +1,4 @@
-# TODO
-# * allow for network policy to be applied to the WIF user
-# * TEST FOR OIDC (completely untested), GCP (completely untested) and AZURE (which I changed to match the docs https://docs.snowflake.com/en/sql-reference/sql/alter-user)
+# TODO: TEST FOR OIDC (completely untested), GCP (completely untested) and AZURE (which I changed to match the docs https://docs.snowflake.com/en/sql-reference/sql/alter-user)
 
 ################################################################################
 # Locals
@@ -57,17 +55,12 @@ resource "snowflake_service_user" "wif" {
   # TODO: Once supported, add workload_identity here instead of using snowflake_execute below
 }
 
-# WORKLOAD_IDENTITY not supported in service_user resource as of provider v2.12, so we use execute
+# The WORKLOAD_IDENTITY property is not supported in service_user resource as of provider v2.12, so we use execute
 resource "snowflake_execute" "wif_workload_identity" {
-  # ALTER USER ${snowflake_service_user.wif.login_name} SET WORKLOAD_IDENTITY = ( ## may be sensitive????
-  execute = <<SQL
-ALTER USER ${var.wif_user_name} SET WORKLOAD_IDENTITY = (
-  ${local.workload_identity_sql_string})
-SQL
+  execute = "ALTER USER ${var.wif_user_name} SET WORKLOAD_IDENTITY = (${local.workload_identity_sql_string});"
+  revert  = "ALTER USER ${var.wif_user_name} UNSET WORKLOAD_IDENTITY;"
 
-  revert = "ALTER USER ${var.wif_user_name} UNSET WORKLOAD_IDENTITY;"
-
-  depends_on = [snowflake_service_user.wif] # needed because passing in var above, not resource
+  depends_on = [snowflake_service_user.wif]
 }
 
 # Grant the WIF role to the service user
@@ -76,6 +69,7 @@ resource "snowflake_grant_account_role" "wif_role_to_user" {
   user_name = snowflake_service_user.wif.name
 }
 
+# Grant permissions to the WIF role
 resource "snowflake_grant_privileges_to_account_role" "wif_role_permissions" {
   for_each          = var.wif_role_permissions
   account_role_name = snowflake_account_role.wif.name
