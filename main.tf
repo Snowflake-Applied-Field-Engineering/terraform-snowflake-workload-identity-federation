@@ -1,101 +1,91 @@
+# TODO: TEST FOR OIDC (completely untested), GCP (completely untested) and AZURE (which I changed to match the docs https://docs.snowflake.com/en/sql-reference/sql/alter-user)
+
 ################################################################################
 # Locals
 ################################################################################
 
 locals {
-  wi_sql_aws = var.csp == "aws" ? (<<EOT
+  ## Define the workload identity SQL string for each CSP
+  # This is needed because the service_user resource does not yet support WORKLOAD_IDENTITY
+  wi_sql_aws = var.wif_type == "aws" ? (<<EOT
     TYPE = AWS
     ARN  = '${var.aws_role_arn}'
   EOT
   ) : null
 
-  wi_sql_azure = var.csp == "azure" ? (<<EOT
+  wi_sql_azure = var.wif_type == "azure" ? (<<EOT
     TYPE = AZURE
-    AZURE_TENANT_ID = '${var.azure_tenant_id}'
-    AZURE_APPLICATION_ID = '${var.azure_sp_id}'
+    ISSUER = 'https://login.microsoftonline.com/${var.azure_tenant_id}/v2.0'
+    SUBJECT = '${var.azure_service_principal_id}'
 EOT
   ) : null
 
-  wi_sql_gcp = var.csp == "gcp" ? (<<EOT
-  #! TODO
+  wi_sql_gcp = var.wif_type == "gcp" ? (<<EOT
+    TYPE = GCP
+    SUBJECT = '${var.gcp_service_account_id}'
   EOT
   ) : null
 
-  workload_identity_sql_string = var.csp == "aws" ? local.wi_sql_aws : (var.csp == "azure" ? local.wi_sql_azure : (var.csp == "gcp" ? local.wi_sql_gcp : null))
+  wi_sql_oidc = var.wif_type == "oidc" ? (<<EOT
+    TYPE = OIDC
+    ISSUER = '${var.oidc_issuer_url}'
+    SUBJECT = '${var.oidc_subject}'
+    AUDIENCE_LIST = (${join(", ", [for aud in var.oidc_audience_list : "'${aud}'"])})
+  EOT
+  ) : null
+
+  workload_identity_sql_string = var.wif_type == "aws" ? local.wi_sql_aws : (var.wif_type == "azure" ? local.wi_sql_azure : (var.wif_type == "gcp" ? local.wi_sql_gcp : (var.wif_type == "oidc" ? local.wi_sql_oidc : null)))
 }
 
 ################################################################################
 # Snowflake Resources
 ################################################################################
 
-# 1) Create the WIF test role in Snowflake
-resource "snowflake_account_role" "wif_test_role" {
+# Create the WIF role and user in Snowflake
+resource "snowflake_account_role" "wif" {
   name    = var.wif_role_name
-  comment = "Role for AWS→Snowflake WIF test user (Terraform-managed)"
+  comment = "Role for WIF Access to Snowflake. Managed by Terraform."
 }
 
-# 2) Create the WIF service user via exact SQL (TYPE=SERVICE + WORKLOAD_IDENTITY)
-#    We use snowflake_execute because the snowflake_user resource does not yet
-#    expose WORKLOAD_IDENTITY/TYPE=SERVICE as first-class arguments.
-resource "snowflake_execute" "wif_user_create" {
-  # Ensure the role exists and the AWS role ARN is resolved first
-  depends_on = [
-    snowflake_account_role.wif_test_role
-  ]
-
-  # CREATE (idempotent), VERIFY (query), and DESTROY (revert)
-  # Note: LOGIN_NAME is not needed for WIF users - authentication is via WORKLOAD_IDENTITY
-  execute = <<SQL
-CREATE USER IF NOT EXISTS ${var.wif_user_name}
-  TYPE = SERVICE
-  DEFAULT_ROLE = ${snowflake_account_role.wif_test_role.name}
-  WORKLOAD_IDENTITY = (
-  ${local.workload_identity_sql_string})
-  COMMENT = 'WIF service user (AWS role mapped) managed by Terraform';
-SQL
-
-  # Optional visibility during plan/apply
-  query = "SHOW USERS LIKE '${var.wif_user_name}';"
-
-  # Clean removal on destroy
-  revert = "DROP USER IF EXISTS ${var.wif_user_name};"
+resource "snowflake_service_user" "wif" {
+  name              = var.wif_user_name
+  comment           = "User for WIF access to Snowflake. Managed by Terraform."
+  default_role      = snowflake_account_role.wif.name
+  default_warehouse = var.wif_user_default_warehouse
+  # TODO: Once supported, add workload_identity here instead of using snowflake_execute below
 }
 
-# 3) Grant the WIF role to the WIF user
+# The WORKLOAD_IDENTITY property is not supported in service_user resource as of provider v2.12, so we use execute
+resource "snowflake_execute" "wif_workload_identity" {
+  execute = "ALTER USER ${var.wif_user_name} SET WORKLOAD_IDENTITY = (${local.workload_identity_sql_string});"
+  revert  = "ALTER USER ${var.wif_user_name} UNSET WORKLOAD_IDENTITY;"
+
+  depends_on = [snowflake_service_user.wif]
+}
+
+# Grant the WIF role to the service user
 resource "snowflake_grant_account_role" "wif_role_to_user" {
-  role_name  = snowflake_account_role.wif_test_role.name
-  user_name  = var.wif_user_name
-  depends_on = [snowflake_execute.wif_user_create]
+  role_name = snowflake_account_role.wif.name
+  user_name = snowflake_service_user.wif.name
 }
 
-# --- Optional: minimal usage grants so the user can run a quick query ---
-# Guard each with count so nulls skip creation.
+# Grant permissions to the WIF role
+resource "snowflake_grant_privileges_to_account_role" "wif_role_permissions" {
+  for_each          = var.wif_role_permissions
+  account_role_name = snowflake_account_role.wif.name
+  privileges        = each.value.permissions
 
-resource "snowflake_grant_privileges_to_account_role" "wif_wh_usage" {
-  count             = var.wif_default_warehouse == null ? 0 : 1
-  account_role_name = snowflake_account_role.wif_test_role.name
-  privileges        = ["USAGE"]
-  on_account_object {
-    object_type = "WAREHOUSE"
-    object_name = var.wif_default_warehouse
+  dynamic "on_account_object" { # database or warehouse
+    for_each = upper(each.value.type) == "DATABASE" || upper(each.value.type) == "WAREHOUSE" ? [1] : []
+    content {
+      object_type = upper(each.value.type)
+      object_name = each.value.name
+    }
   }
-}
-
-resource "snowflake_grant_privileges_to_account_role" "wif_db_usage" {
-  count             = var.wif_test_database == null ? 0 : 1
-  account_role_name = snowflake_account_role.wif_test_role.name
-  privileges        = ["USAGE"]
-  on_account_object {
-    object_type = "DATABASE"
-    object_name = var.wif_test_database
-  }
-}
-
-resource "snowflake_grant_privileges_to_account_role" "wif_schema_usage" {
-  count             = var.wif_test_schema == null ? 0 : 1
-  account_role_name = snowflake_account_role.wif_test_role.name
-  privileges        = ["USAGE"]
-  on_schema {
-    schema_name = "${var.wif_test_database}.${var.wif_test_schema}"
+  dynamic "on_schema" {
+    for_each = upper(each.value.type) == "SCHEMA" ? [1] : []
+    content {
+      schema_name = each.value.name
+    }
   }
 }

@@ -51,24 +51,33 @@ This example demonstrates the basic usage of the Terraform module.
 This example creates:
 - [List the resources created]
 
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| terraform | >= 1.5.0 |
-| aws | ~> 5.0 |
-| snowflake | ~> 0.94 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
+| <a name="requirement_snowflake"></a> [snowflake](#requirement\_snowflake) | >= 2.9, <= 2.12 |
+
+## Providers
+
+No providers.
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_wif_aws"></a> [wif\_aws](#module\_wif\_aws) | ../../ | n/a |
+
+## Resources
+
+No resources.
 
 ## Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| name | Name of the resource | `string` | `"basic-example"` | no |
-| environment | Environment name | `string` | `"dev"` | no |
+No inputs.
 
 ## Outputs
 
-| Name | Description |
-|------|-------------|
-| id | The ID of the created resource |
-| name | The name of the created resource | -->
+No outputs.
+<!-- END_TF_DOCS -->
