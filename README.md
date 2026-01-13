@@ -51,13 +51,13 @@ No modules.
 | <a name="input_wif_type"></a> [wif\_type](#input\_wif\_type) | The type of WIF identity to create. Must be one of: aws, azure, gcp, oidc. | `string` | `"aws"` | no |
 | <a name="input_wif_user_default_warehouse"></a> [wif\_user\_default\_warehouse](#input\_wif\_user\_default\_warehouse) | (Optional) Default warehouse for the WIF service user. Must already exist if provided (not validated by module). | `string` | `null` | no |
 | <a name="input_wif_user_name"></a> [wif\_user\_name](#input\_wif\_user\_name) | Name of the Snowflake Service User to create for WIF. | `string` | n/a | yes |
+| <a name="input_wif_user_network_policy_name"></a> [wif\_user\_network\_policy\_name](#input\_wif\_user\_network\_policy\_name) | (Optional) The name of an existing network policy to attach to the WIF user. | `string` | `null` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
 | <a name="output_role_name"></a> [role\_name](#output\_role\_name) | n/a |
-| <a name="output_service_user_login_name"></a> [service\_user\_login\_name](#output\_service\_user\_login\_name) | n/a |
 <!-- END_TF_DOCS -->
 
 ## Development

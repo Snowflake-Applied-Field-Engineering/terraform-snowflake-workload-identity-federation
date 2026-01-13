@@ -21,6 +21,16 @@ variable "wif_role_name" {
   type        = string
 }
 
+variable "wif_role_permissions" {
+  description = "A map of objects describing the custom permissions to grant to the WIF role. Note that for schemas, the name must be in DATABASE.SCHEMA format."
+  type = map(object({
+    type        = string       # one of "database", "schema", "warehouse"
+    name        = string       # name of the database, schema, or warehouse. Schema must be in DB.SCHEMA format.
+    permissions = list(string) # list of permissions to grant
+  }))
+  default = {}
+}
+
 variable "wif_user_name" {
   description = "Name of the Snowflake Service User to create for WIF."
   type        = string
@@ -32,14 +42,10 @@ variable "wif_user_default_warehouse" {
   default     = null
 }
 
-variable "wif_role_permissions" {
-  description = "A map of objects describing the custom permissions to grant to the WIF role. Note that for schemas, the name must be in DATABASE.SCHEMA format."
-  type = map(object({
-    type        = string       # one of "database", "schema", "warehouse"
-    name        = string       # name of the database, schema, or warehouse. Schema must be in DB.SCHEMA format.
-    permissions = list(string) # list of permissions to grant
-  }))
-  default = {}
+variable "wif_user_network_policy_name" {
+  description = "(Optional) The name of an existing network policy to attach to the WIF user."
+  type        = string
+  default     = null
 }
 
 ################################################################################

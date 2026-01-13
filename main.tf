@@ -52,6 +52,7 @@ resource "snowflake_service_user" "wif" {
   comment           = "User for WIF access to Snowflake. Managed by Terraform."
   default_role      = snowflake_account_role.wif.name
   default_warehouse = var.wif_user_default_warehouse
+  network_policy    = var.wif_user_network_policy_name
   # TODO: Once supported, add workload_identity here instead of using snowflake_execute below
 }
 
