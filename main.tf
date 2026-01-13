@@ -76,19 +76,6 @@ resource "snowflake_grant_account_role" "wif_role_to_user" {
   user_name = snowflake_service_user.wif.name
 }
 
-# --- Optional: minimal usage grants so the user can run a quick query ---
-# Guard each with count so nulls skip creation.
-
-# resource "snowflake_grant_privileges_to_account_role" "wif_wh_usage" {
-#   count             = var.wif_default_warehouse == null ? 0 : 1
-#   account_role_name = snowflake_account_role.wif.name
-#   privileges        = ["USAGE"]
-#   on_account_object {
-#     object_type = "WAREHOUSE"
-#     object_name = var.wif_default_warehouse
-#   }
-# }
-
 resource "snowflake_grant_privileges_to_account_role" "wif_role_permissions" {
   for_each          = var.wif_role_permissions
   account_role_name = snowflake_account_role.wif.name
