@@ -13,7 +13,7 @@ module "wif_aws" {
 
   # Replace EXAMPLE_DB, EXAMPLE_SCHEMA, and EXAMPLE_WAREHOUSE with your database, schema, and warehouse names.
   # Optionally modify the granted permissions.
-  wif_role_custom_permissions = {
+  wif_role_permissions = {
     my_db = {
       type        = "database"
       name        = "EXAMPLE_DB"

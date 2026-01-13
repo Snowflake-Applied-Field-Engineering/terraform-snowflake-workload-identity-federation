@@ -17,15 +17,13 @@ variable "wif_type" {
 ################################################################################
 
 variable "wif_role_name" {
-  description = "Name of the WIF test role"
+  description = "Name of the Snowflake role to create for WIF."
   type        = string
-  default     = "wif"
 }
 
 variable "wif_user_name" {
-  description = "Name of the WIF test user"
+  description = "Name of the Snowflake Service User to create for WIF."
   type        = string
-  default     = "WIF_TEST_USER"
 }
 
 variable "wif_default_warehouse" {
@@ -34,20 +32,7 @@ variable "wif_default_warehouse" {
   default     = null
 }
 
-variable "wif_test_database" {
-  description = "Database to test privileges of the WIF test user/role(must exist)"
-  type        = string
-  default     = null
-
-}
-
-variable "wif_test_schema" {
-  description = "Schema to test privileges of the WIF test user/role(must exist)"
-  type        = string
-  default     = null
-}
-
-variable "wif_role_custom_permissions" {
+variable "wif_role_permissions" {
   description = "A map of objects describing the custom permissions to grant to the WIF role. Note that for schemas, the name must be in DATABASE.SCHEMA format."
   type = map(object({
     type        = string       # one of "database", "schema", "warehouse"
@@ -56,48 +41,6 @@ variable "wif_role_custom_permissions" {
   }))
   default = {}
 }
-
-
-# variable "custom_permissions" {
-#   # description = "TODO"
-#   # type        = list(string)
-#   type = object({
-#     databases = object({
-#       name = string
-#       permissions = list(string)
-#     })
-#     schemas = object({
-#       name = string
-#       permissions = list(string)
-#     })
-#     warehouses = object({
-#       name = string
-#       permissions = list(string)
-#     })
-#   })
-#   # default = {} # TODO
-#   default     = {
-#     databases = {
-#       otel = {
-#         name = "OTEL_COLLECTOR_DEMO_ADF_STREAMING_DB"
-#         permissions = ["USAGE"]
-#       }
-#     }
-#     schemas = {
-#       otel = {
-#         name = "db1"
-#           name = "PUBLIC"
-#           permissions = ["USAGE"]
-#       }
-#     }
-#     warehouses = {
-#       otel = {
-#         name = "OTEL_COLLECTOR_DEMO_ADF_STREAMING_WH"
-#         permissions = ["USAGE"]
-#       }
-#     }
-#   }
-# }
 
 ################################################################################
 # AWS WIF variables

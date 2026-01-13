@@ -88,9 +88,7 @@ module "snowflake_wif_role" {
   wif_role_name         = upper("${var.name_prefix}_ROLE")
   wif_user_name         = upper("${var.name_prefix}_USER")
 
-  # Replace EXAMPLE_DB, EXAMPLE_SCHEMA, and EXAMPLE_WAREHOUSE with your database, schema, and warehouse names.
-  # Optionally modify the granted permissions.
-  wif_role_custom_permissions = {
+  wif_role_permissions = {
     my_db = {
       type        = "database"
       name        = var.wif_test_database

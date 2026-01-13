@@ -89,27 +89,8 @@ resource "snowflake_grant_privileges_to_account_role" "wif_wh_usage" {
   }
 }
 
-resource "snowflake_grant_privileges_to_account_role" "wif_db_usage" {
-  count             = var.wif_test_database == null ? 0 : 1
-  account_role_name = snowflake_account_role.wif.name
-  privileges        = ["USAGE"]
-  on_account_object {
-    object_type = "DATABASE"
-    object_name = var.wif_test_database
-  }
-}
-
-resource "snowflake_grant_privileges_to_account_role" "wif_schema_usage" {
-  count             = var.wif_test_schema == null ? 0 : 1
-  account_role_name = snowflake_account_role.wif.name
-  privileges        = ["USAGE"]
-  on_schema {
-    schema_name = "${var.wif_test_database}.${var.wif_test_schema}"
-  }
-}
-
-resource "snowflake_grant_privileges_to_account_role" "wif_role_custom_permissions" {
-  for_each          = var.wif_role_custom_permissions
+resource "snowflake_grant_privileges_to_account_role" "wif_role_permissions" {
+  for_each          = var.wif_role_permissions
   account_role_name = snowflake_account_role.wif.name
   privileges        = each.value.permissions
 

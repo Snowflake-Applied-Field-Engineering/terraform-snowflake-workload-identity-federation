@@ -17,6 +17,8 @@ Note that this guide focuses on this Terraform module. If you choose to upgrade 
    - Reason: we now use the `snowflake_service_user` resource to create the actual user, and only use `snowflake_execute` to `SET WORKLOAD_IDENTITY` on the user (as this isn't currently supported natively by the provider). While this causes pain now, this will be needed eventually and should help ease future migrations once `snowflake_service_user` supports setting workload_identity natively.
 1. The default value for several variables has changed! If you don't explicitly pass in values, you may see proposed drift during `terraform plan`.
 1. The variable `var.csp` has been renamed to `var.wif_type`.
+1. The variables `var.wif_test_database` and `var.wif_test_schema` have been removed from the core module to remove ambiguity. All permissions should instead be passed via `var.wif_role_permissions`.
+   1. They are still present in [examples/complete-aws-iam-ec2](./examples/complete-aws-iam-ec2/variables-additional.tf) to allow for simple testing, where they are used to construct `var.wif_role_permissions`.
 
 ### Other Notes
 
