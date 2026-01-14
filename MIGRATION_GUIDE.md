@@ -6,6 +6,12 @@ across different versions.
 
 Note that this guide focuses on this Terraform module. If you choose to upgrade the version of your Snowflake Terraform Provider (or don't have it otherwise pinned), you **must** also follow the [provider migration guide](https://github.com/snowflakedb/terraform-provider-snowflake/blob/main/MIGRATION_GUIDE.md).
 
+## v0.2.0 ➞ v0.3.0
+
+### Breaking Changes
+
+1. `output.role_name` has changed to `output.wif_role_name` to ensure consistency with the names used for input variables.
+
 ## v0.1.0 ➞ v0.2.0
 
 ### Breaking Changes
