@@ -151,18 +151,18 @@ variable "snowflake_private_key_passphrase" {
   default     = ""
 }
 
-# Snowflake WIF Identity Objects
-variable "wif_user_name" {
-  description = "Name of the Snowflake WIF test user (e.g., WIF_TEST_USER)"
-  type        = string
-  default     = "WIF_TEST_USER"
-}
+# # Snowflake WIF Identity Objects
+# variable "wif_user_name" {
+#   description = "Name of the Snowflake WIF test user (e.g., WIF_TEST_USER)"
+#   type        = string
+#   default     = "WIF_TEST_USER"
+# }
 
-variable "wif_role_name" {
-  description = "Name of the WIF test role"
-  type        = string
-  default     = "WIF_TEST_ROLE"
-}
+# variable "wif_role_name" {
+#   description = "Name of the WIF test role"
+#   type        = string
+#   default     = "WIF_TEST_ROLE"
+# }
 
 # Optional Snowflake Context for Testing
 variable "wif_default_warehouse" {

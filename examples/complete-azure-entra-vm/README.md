@@ -549,10 +549,8 @@ For issues or questions:
 | <a name="input_vnet_address_space"></a> [vnet\_address\_space](#input\_vnet\_address\_space) | Address space for VNet if creating new (CIDR notation) | `list(string)` | <pre>[<br/>  "10.0.0.0/16"<br/>]</pre> | no |
 | <a name="input_vnet_name"></a> [vnet\_name](#input\_vnet\_name) | Name of existing VNet (leave empty to create new) | `string` | `""` | no |
 | <a name="input_wif_default_warehouse"></a> [wif\_default\_warehouse](#input\_wif\_default\_warehouse) | Default warehouse for the WIF test user/role (must exist) | `string` | `null` | no |
-| <a name="input_wif_role_name"></a> [wif\_role\_name](#input\_wif\_role\_name) | Name of the WIF test role | `string` | `"WIF_TEST_ROLE"` | no |
 | <a name="input_wif_test_database"></a> [wif\_test\_database](#input\_wif\_test\_database) | Database to test privileges of the WIF test user/role (must exist) | `string` | `null` | no |
 | <a name="input_wif_test_schema"></a> [wif\_test\_schema](#input\_wif\_test\_schema) | Schema to test privileges of the WIF test user/role (must exist) | `string` | `null` | no |
-| <a name="input_wif_user_name"></a> [wif\_user\_name](#input\_wif\_user\_name) | Name of the Snowflake WIF test user (e.g., WIF\_TEST\_USER) | `string` | `"WIF_TEST_USER"` | no |
 
 ## Outputs
 

@@ -35,10 +35,6 @@ snowflake_role              = "ACCOUNTADMIN"
 snowflake_private_key_path  = "/path/to/snowflake_rsa_key.p8"
 # snowflake_private_key_passphrase = "your_passphrase"  # If key is encrypted
 
-# WIF Test Resources (to be created in Snowflake)
-wif_user_name = "WIF_TEST_USER"
-wif_role_name = "WIF_TEST_ROLE"
-
 # Optional: Snowflake Context for Testing
 wif_default_warehouse = "COMPUTE_WH"  # Must exist in Snowflake
 wif_test_database     = "TEST_DB"     # Must exist in Snowflake

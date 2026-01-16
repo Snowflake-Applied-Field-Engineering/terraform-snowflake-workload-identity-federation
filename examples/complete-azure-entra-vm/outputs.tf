@@ -119,8 +119,8 @@ output "test_instructions" {
 
     === Configuration Details ===
     Snowflake Account: ${var.snowflake_organization_name}-${var.snowflake_account_name}
-    WIF User: ${var.wif_user_name}
-    WIF Role: ${var.wif_role_name}
+    WIF User: {module.snowflake_wif_role.wif_user_name} #! TODO module doesn't output the user name
+    WIF Role: ${module.snowflake_wif_role.wif_role_name}
     Azure Tenant ID: ${var.azure_tenant_id}
     Azure Application ID: ${local.wif_azure_sp_id_effective}
 
