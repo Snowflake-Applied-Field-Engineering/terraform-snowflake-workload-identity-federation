@@ -48,7 +48,7 @@ variable "subnet_address_prefix" {
 }
 
 variable "name_prefix" {
-  description = "Prefix to apply to resource names"
+  description = "Prefix to apply to resource names. Note that hyphens will be replaced with underscores for Snowflake role and user names."
   type        = string
   default     = "snow-wif-test"
 }

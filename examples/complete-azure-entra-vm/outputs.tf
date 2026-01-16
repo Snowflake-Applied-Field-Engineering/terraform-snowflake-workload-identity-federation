@@ -94,6 +94,7 @@ output "wif_test_role" {
 #   value       = module.snowflake_wif_role.wif_user_name
 # }
 
+
 # --- Convenience outputs ---
 
 output "test_instructions" {

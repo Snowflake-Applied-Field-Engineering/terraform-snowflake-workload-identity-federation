@@ -67,8 +67,8 @@ module "snowflake_wif_role" {
   azure_service_principal_id = local.wif_azure_sp_id_effective
   azure_tenant_id            = var.azure_tenant_id
 
-  wif_role_name              = upper("${var.name_prefix}_ROLE")
-  wif_user_name              = upper("${var.name_prefix}_USER")
+  wif_role_name              = replace(upper("${var.name_prefix}_ROLE"), "-", "_")
+  wif_user_name              = replace(upper("${var.name_prefix}_USER"), "-", "_")
   wif_user_default_warehouse = var.wif_default_warehouse
 
   wif_role_permissions = {

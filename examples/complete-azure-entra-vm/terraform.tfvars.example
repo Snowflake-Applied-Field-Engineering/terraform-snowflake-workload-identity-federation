@@ -8,24 +8,24 @@ location              = "eastus"
 resource_group_name   = "rg-snowflake-wif-test"
 
 # VNet Configuration (leave empty to create new)
-vnet_name               = ""  # Or specify existing VNet name
-subnet_name             = ""  # Or specify existing subnet name
-vnet_address_space      = ["10.0.0.0/16"]
-subnet_address_prefix   = "10.0.1.0/24"
+vnet_name             = "" # Or specify existing VNet name
+subnet_name           = "" # Or specify existing subnet name
+vnet_address_space    = ["10.0.0.0/16"]
+subnet_address_prefix = "10.0.1.0/24"
 
 # VM Configuration
-name_prefix    = "snow-wif-test"
+name_prefix    = "snow_wif_test"
 vm_size        = "Standard_B2s"
 admin_username = "azureuser"
 
 # SSH Configuration (provide either SSH key or password)
-ssh_public_key_path = "~/.ssh/id_rsa.pub"  # Or leave empty for auto-generated key
+ssh_public_key_path = "~/.ssh/id_rsa.pub"       # Or leave empty for auto-generated key
 # admin_password    = "YourSecurePassword123!"  # Uncomment if not using SSH key
 
 # Network Security
-enable_public_ip           = true
-allow_ssh_from_internet    = false  # Set to true only for testing
-ssh_source_address_prefixes = ["YOUR.IP.ADDRESS/32"]  # Your IP for SSH access
+enable_public_ip            = true
+allow_ssh_from_internet     = false                  # Set to true only for testing
+ssh_source_address_prefixes = ["YOUR.IP.ADDRESS/32"] # Your IP for SSH access
 
 # Snowflake Provider Authentication (for Terraform)
 snowflake_organization_name = "your_org_name"

@@ -531,7 +531,7 @@ For issues or questions:
 | <a name="input_azure_tenant_id"></a> [azure\_tenant\_id](#input\_azure\_tenant\_id) | Azure AD tenant ID | `string` | n/a | yes |
 | <a name="input_enable_public_ip"></a> [enable\_public\_ip](#input\_enable\_public\_ip) | Whether to create and assign a public IP to the VM | `bool` | `true` | no |
 | <a name="input_location"></a> [location](#input\_location) | Azure region to deploy into (e.g., eastus, westus2) | `string` | `"eastus"` | no |
-| <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | Prefix to apply to resource names | `string` | `"snow-wif-test"` | no |
+| <a name="input_name_prefix"></a> [name\_prefix](#input\_name\_prefix) | Prefix to apply to resource names. Note that hyphens will be replaced with underscores for Snowflake role and user names. | `string` | `"snow-wif-test"` | no |
 | <a name="input_os_image"></a> [os\_image](#input\_os\_image) | OS image to use for VM | <pre>object({<br/>    publisher = string<br/>    offer     = string<br/>    sku       = string<br/>    version   = string<br/>  })</pre> | <pre>{<br/>  "offer": "0001-com-ubuntu-server-jammy",<br/>  "publisher": "Canonical",<br/>  "sku": "22_04-lts-gen2",<br/>  "version": "latest"<br/>}</pre> | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Name of the Azure resource group (will be created if it doesn't exist) | `string` | `"rg-snowflake-wif-test"` | no |
 | <a name="input_snowflake_account_name"></a> [snowflake\_account\_name](#input\_snowflake\_account\_name) | Snowflake account locator (e.g., xy12345 or xy12345.us-east-1) | `string` | n/a | yes |
