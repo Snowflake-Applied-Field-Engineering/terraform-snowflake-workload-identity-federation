@@ -8,12 +8,14 @@ locals {
   ## Define the workload identity SQL string for each CSP
   # This is needed because the service_user resource does not yet support WORKLOAD_IDENTITY
   wi_sql_aws = var.wif_type == "aws" ? (<<EOT
+
     TYPE = AWS
     ARN  = '${var.aws_role_arn}'
   EOT
   ) : null
 
   wi_sql_azure = var.wif_type == "azure" ? (<<EOT
+
     TYPE = AZURE
     ISSUER = 'https://login.microsoftonline.com/${var.azure_tenant_id}/v2.0'
     SUBJECT = '${var.azure_service_principal_id}'
@@ -21,12 +23,14 @@ EOT
   ) : null
 
   wi_sql_gcp = var.wif_type == "gcp" ? (<<EOT
+
     TYPE = GCP
     SUBJECT = '${var.gcp_service_account_id}'
   EOT
   ) : null
 
   wi_sql_oidc = var.wif_type == "oidc" ? (<<EOT
+
     TYPE = OIDC
     ISSUER = '${var.oidc_issuer_url}'
     SUBJECT = '${var.oidc_subject}'
