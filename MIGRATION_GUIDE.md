@@ -11,7 +11,7 @@ Note that this guide focuses on this Terraform module. If you choose to upgrade 
 ### Breaking Changes
 
 - The `resource.snowflake_execute.wif_workload_identity` resource is removed, and has been superseded by the native `default_workload_identity`.
-  - A `removed` block has been added to `migrations.tf` to address this change. Intended behavior is that the `snowflake_execute` resource is removed from state, and the new `default_workload_identity` block takes over future management.
+  - The existing `snowflake_execute` must be removed from the Terraform state. This can be done either manually by running `terraform state rm snowflake_execute.wif_workload_identity`, or by uncommenting the `removed` block in `migrations.tf` (requires Terraform >=v1.7).
 - The `snowflakedb/snowflake` Terraform provider is now pinned to `~>2.13.0` (was: `>= 2.9, <= 2.12`). This is to allow usage of the native `default_workload_identity` block in the `snowflake_service_user`. If you must use an older version of the Terraform provider, please continue to use `v0.3.0` of this module.
   - This currently requires adding `experimental_features_enabled = ["USER_ENABLE_DEFAULT_WORKLOAD_IDENTITY"]` to your provider configuration when you invoke this module. See [the example providers.tf](./examples/basic-aws-existing-role/providers.tf)
 - `moves.tf` has been renamed to `migrations.tf`.
