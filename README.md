@@ -13,13 +13,13 @@ This module provides a composable method to configure Workload Identity Federati
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
-| <a name="requirement_snowflake"></a> [snowflake](#requirement\_snowflake) | >= 2.9, <= 2.12 |
+| <a name="requirement_snowflake"></a> [snowflake](#requirement\_snowflake) | ~>2.13.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_snowflake"></a> [snowflake](#provider\_snowflake) | >= 2.9, <= 2.12 |
+| <a name="provider_snowflake"></a> [snowflake](#provider\_snowflake) | ~>2.13.0 |
 
 ## Modules
 
@@ -30,7 +30,6 @@ No modules.
 | Name | Type |
 |------|------|
 | [snowflake_account_role.wif](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/resources/account_role) | resource |
-| [snowflake_execute.wif_workload_identity](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/resources/execute) | resource |
 | [snowflake_grant_account_role.wif_role_to_user](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/resources/grant_account_role) | resource |
 | [snowflake_grant_privileges_to_account_role.wif_role_permissions](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/resources/grant_privileges_to_account_role) | resource |
 | [snowflake_service_user.wif](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/resources/service_user) | resource |

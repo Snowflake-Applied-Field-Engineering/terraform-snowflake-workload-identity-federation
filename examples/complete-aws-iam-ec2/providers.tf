@@ -14,6 +14,7 @@
 
 # Option A: Environment Variables (current configuration)
 provider "snowflake" {
+  experimental_features_enabled = ["USER_ENABLE_DEFAULT_WORKLOAD_IDENTITY"]
   ## Substitute in the appropriate values for the environment variables and run the following in your terminal:
   # export SNOWFLAKE_ACCOUNT_NAME="REPLACE_ME"
   # export SNOWFLAKE_AUTHENTICATOR="SNOWFLAKE_JWT" # For Key-pair authentication

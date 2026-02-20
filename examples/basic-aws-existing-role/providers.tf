@@ -12,7 +12,7 @@
 ## TODO examples for all
 
 provider "snowflake" {
-  preview_features_enabled = ["snowflake_current_account_datasource"]
+  experimental_features_enabled = ["USER_ENABLE_DEFAULT_WORKLOAD_IDENTITY"]
   ## You also have to run appropriate exports. E.g. for key-pair authentication:
   # export SNOWFLAKE_ACCOUNT_NAME="REPLACE_ME"
   # export SNOWFLAKE_AUTHENTICATOR="SNOWFLAKE_JWT" # For Key-pair authentication

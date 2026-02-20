@@ -57,7 +57,7 @@ This example creates:
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
-| <a name="requirement_snowflake"></a> [snowflake](#requirement\_snowflake) | >= 2.9, <= 2.12 |
+| <a name="requirement_snowflake"></a> [snowflake](#requirement\_snowflake) | ~>2.13.0 |
 
 ## Providers
 
