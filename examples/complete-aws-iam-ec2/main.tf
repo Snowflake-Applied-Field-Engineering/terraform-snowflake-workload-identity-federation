@@ -1,4 +1,3 @@
-
 ################################################################################
 # Locals
 ################################################################################
@@ -11,7 +10,7 @@ locals {
       snowflake_organization_name = var.snowflake_organization_name # TODO need to either get this from provider (if possible), else datasource or variable
       snowflake_account_name      = var.snowflake_account_name      # TODO need to either get this from provider (if possible), else datasource or variable
       context_setup = join("\n        ", compact([
-        var.wif_default_warehouse != null ? "cur.execute(\"USE WAREHOUSE ${var.wif_default_warehouse}\")\n        print(\"  ✅ Using warehouse: ${var.wif_default_warehouse}\")" : null,
+        var.wif_test_warehouse != null ? "cur.execute(\"USE WAREHOUSE ${var.wif_test_warehouse}\")\n        print(\"  ✅ Using warehouse: ${var.wif_test_warehouse}\")" : null,
         var.wif_test_database != null ? "cur.execute(\"USE DATABASE ${var.wif_test_database}\")\n        print(\"  ✅ Using database: ${var.wif_test_database}\")" : null,
         var.wif_test_schema != null ? "cur.execute(\"USE SCHEMA ${var.wif_test_schema}\")\n        print(\"  ✅ Using schema: ${var.wif_test_schema}\")" : null
       ]))
@@ -82,14 +81,30 @@ module "aws_iam_role" {
 module "snowflake_wif_role" {
   source = "../../"
 
-  csp          = "aws"
+  wif_type     = "aws"
   aws_role_arn = module.aws_iam_role.arn
 
-  wif_default_warehouse = var.wif_default_warehouse
-  wif_role_name         = upper("${var.name_prefix}_ROLE")
-  wif_test_database     = var.wif_test_database
-  wif_test_schema       = var.wif_test_schema
-  wif_user_name         = upper("${var.name_prefix}_USER")
+  wif_role_name              = upper("${var.name_prefix}_ROLE")
+  wif_user_name              = upper("${var.name_prefix}_USER")
+  wif_user_default_warehouse = var.wif_test_warehouse
+
+  wif_role_permissions = {
+    my_db = {
+      type        = "database"
+      name        = var.wif_test_database
+      permissions = ["USAGE"]
+    }
+    my_schema = {
+      type        = "schema"
+      name        = "${var.wif_test_database}.${var.wif_test_schema}"
+      permissions = ["USAGE"]
+    }
+    my_warehouse = {
+      type        = "warehouse"
+      name        = var.wif_test_warehouse
+      permissions = ["USAGE"]
+    }
+  }
 }
 
 module "ec2_instance" {
