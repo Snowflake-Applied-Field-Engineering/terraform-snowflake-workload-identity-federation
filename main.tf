@@ -1,43 +1,6 @@
 # TODO: TEST FOR OIDC (completely untested), GCP (completely untested) and AZURE (which I changed to match the docs https://docs.snowflake.com/en/sql-reference/sql/alter-user)
 
 ################################################################################
-# Locals
-################################################################################
-
-locals {
-  ## Define the workload identity SQL string for each CSP
-  # This is needed because the service_user resource does not yet support WORKLOAD_IDENTITY
-  wi_sql_aws = var.wif_type == "aws" ? (<<EOT
-    TYPE = AWS
-    ARN  = '${var.aws_role_arn}'
-  EOT
-  ) : null
-
-  wi_sql_azure = var.wif_type == "azure" ? (<<EOT
-    TYPE = AZURE
-    ISSUER = 'https://login.microsoftonline.com/${var.azure_tenant_id}/v2.0'
-    SUBJECT = '${var.azure_service_principal_id}'
-EOT
-  ) : null
-
-  wi_sql_gcp = var.wif_type == "gcp" ? (<<EOT
-    TYPE = GCP
-    SUBJECT = '${var.gcp_service_account_id}'
-  EOT
-  ) : null
-
-  wi_sql_oidc = var.wif_type == "oidc" ? (<<EOT
-    TYPE = OIDC
-    ISSUER = '${var.oidc_issuer_url}'
-    SUBJECT = '${var.oidc_subject}'
-    AUDIENCE_LIST = (${join(", ", [for aud in var.oidc_audience_list : "'${aud}'"])})
-  EOT
-  ) : null
-
-  workload_identity_sql_string = var.wif_type == "aws" ? local.wi_sql_aws : (var.wif_type == "azure" ? local.wi_sql_azure : (var.wif_type == "gcp" ? local.wi_sql_gcp : (var.wif_type == "oidc" ? local.wi_sql_oidc : null)))
-}
-
-################################################################################
 # Snowflake Resources
 ################################################################################
 
@@ -53,15 +16,45 @@ resource "snowflake_service_user" "wif" {
   default_role      = snowflake_account_role.wif.name
   default_warehouse = var.wif_user_default_warehouse
   network_policy    = var.wif_user_network_policy_name
-  # TODO: Once supported, add workload_identity here instead of using snowflake_execute below
-}
 
-# The WORKLOAD_IDENTITY property is not supported in service_user resource as of provider v2.12, so we use execute
-resource "snowflake_execute" "wif_workload_identity" {
-  execute = "ALTER USER ${var.wif_user_name} SET WORKLOAD_IDENTITY = (${local.workload_identity_sql_string});"
-  revert  = "ALTER USER ${var.wif_user_name} UNSET WORKLOAD_IDENTITY;"
+  dynamic "default_workload_identity" {
+    for_each = var.wif_type == "aws" ? [1] : []
+    content {
+      aws {
+        arn = var.aws_role_arn
+      }
+    }
+  }
 
-  depends_on = [snowflake_service_user.wif]
+  dynamic "default_workload_identity" {
+    for_each = var.wif_type == "azure" ? [1] : []
+    content {
+      azure {
+        issuer  = "https://login.microsoftonline.com/${var.azure_tenant_id}/v2.0"
+        subject = var.azure_service_principal_id
+      }
+    }
+  }
+
+  dynamic "default_workload_identity" {
+    for_each = var.wif_type == "gcp " ? [1] : []
+    content {
+      gcp {
+        subject = var.gcp_service_account_id
+      }
+    }
+  }
+
+  dynamic "default_workload_identity" {
+    for_each = var.wif_type == "oidc" ? [1] : []
+    content {
+      oidc {
+        issuer             = var.oidc_issuer_url
+        subject            = var.oidc_subject
+        oidc_audience_list = var.oidc_audience_list
+      }
+    }
+  }
 }
 
 # Grant the WIF role to the service user
