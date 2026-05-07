@@ -11,15 +11,15 @@ This module provides a composable method to configure Workload Identity Federati
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
-| <a name="requirement_snowflake"></a> [snowflake](#requirement\_snowflake) | ~>2.13.0 |
+| <a name="requirement_snowflake"></a> [snowflake](#requirement\_snowflake) | >= 2.13.0, < 2.16 |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
-| <a name="provider_snowflake"></a> [snowflake](#provider\_snowflake) | ~>2.13.0 |
+| ---- | ------- |
+| <a name="provider_snowflake"></a> [snowflake](#provider\_snowflake) | >= 2.13.0, < 2.16 |
 
 ## Modules
 
@@ -28,7 +28,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [snowflake_account_role.wif](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/resources/account_role) | resource |
 | [snowflake_grant_account_role.wif_role_to_user](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/resources/grant_account_role) | resource |
 | [snowflake_grant_privileges_to_account_role.wif_role_permissions](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs/resources/grant_privileges_to_account_role) | resource |
@@ -37,7 +37,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aws_role_arn"></a> [aws\_role\_arn](#input\_aws\_role\_arn) | ARN of the AWS role to use for WIF | `string` | `null` | no |
 | <a name="input_azure_service_principal_id"></a> [azure\_service\_principal\_id](#input\_azure\_service\_principal\_id) | The case-sensitive Object ID (Principal ID) of the managed identity assigned to the Azure workload. | `string` | `null` | no |
 | <a name="input_azure_tenant_id"></a> [azure\_tenant\_id](#input\_azure\_tenant\_id) | Azure tenant ID | `string` | `null` | no |
@@ -55,7 +55,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_wif_role_name"></a> [wif\_role\_name](#output\_wif\_role\_name) | Name of the Snowflake role created for WIF. |
 <!-- END_TF_DOCS -->
 

@@ -6,6 +6,13 @@ across different versions.
 
 Note that this guide focuses on this Terraform module. If you choose to upgrade the version of your Snowflake Terraform Provider (or don't have it otherwise pinned), you **must** also follow the [provider migration guide](https://github.com/snowflakedb/terraform-provider-snowflake/blob/main/MIGRATION_GUIDE.md).
 
+## v0.4.0 ➞ v0.5.0
+
+### (Potenially) Breaking Changes
+
+- The version constraint for the Snowflake Terraform provider has been loosened, changing from `~> 2.13` to `">= 2.13.0, < 2.16"`. If your provider is properly pinned at the root level, this should have minimal to no impact. If not, your Snowflake Terraform provider may get upgraded unintentionally.
+  - See the [Snowflake Terraform provider migration guide](https://github.com/snowflakedb/terraform-provider-snowflake/blob/main/MIGRATION_GUIDE.md) for any breaking changes/migration notes that may apply to your environment.
+
 ## v0.3.0 ➞ v0.4.0
 
 ### Breaking Changes
