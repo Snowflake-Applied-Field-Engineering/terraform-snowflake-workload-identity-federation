@@ -1,7 +1,4 @@
-output "role_name" {
-  value = snowflake_account_role.wif.name
-}
-
-output "service_user_login_name" {
-  value = snowflake_service_user.wif.login_name
+output "wif_role_name" {
+  value       = snowflake_account_role.wif.name
+  description = "Name of the Snowflake role created for WIF."
 }
