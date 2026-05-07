@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euxo pipefail
+
+# --- constants/paths ---
+APP_DIR="/opt/snowflake-test"
+VENV_DIR="$${APP_DIR}/venv"
+TEST_SCRIPT="$${APP_DIR}/test_snowflake.py"
+
+# --- base packages & python install (Amazon Linux 2023 or Ubuntu 22.04) ---
+if command -v dnf >/dev/null 2>&1; then
+  # Amazon Linux 2023
+  dnf -y update
+  dnf -y install python3.11 python3.11-pip jq git tar
+  PYBIN="python3.11"
+elif command -v apt-get >/dev/null 2>&1; then
+  # Ubuntu 22.04 (Python 3.10+ is fine for >=3.9 requirement)
+  export DEBIAN_FRONTEND=noninteractive
+  apt-get update -y
+  apt-get install -y python3 python3-venv python3-pip jq git ca-certificates
+  PYBIN="python3"
+else
+  echo "Unsupported Linux distribution. Aborting." >&2
+  exit 1
+fi
+
+# --- verify python >= 3.9 ---
+$PYBIN - <<'PY'
+import sys
+maj, min = sys.version_info[:2]
+assert (maj, min) >= (3, 9), f"Python>=3.9 required, found {sys.version}"
+print(f"Python version OK: {sys.version.split()[0]}")
+PY
+
+# --- app layout & venv ---
+install -d -m 0755 "$${APP_DIR}"
+$PYBIN -m venv "$${VENV_DIR}"
+source "$${VENV_DIR}/bin/activate"
+python -m pip install --upgrade pip
+python -m pip install "snowflake-connector-python>=3.17"
+
+# --- drop test script from templated content ---
+cat > "$${TEST_SCRIPT}" <<'PYEOF'
+${test_script}
+PYEOF
+chmod 0755 "$${TEST_SCRIPT}"
+
+# --- convenience env for shell sessions ---
+cat > /etc/profile.d/snowflake-test.sh <<EOF
+export SNOWFLAKE_DEFAULT_AUTHENTICATOR="${snowflake_default_authenticator}"
+export SNOWFLAKE_ACCOUNT="${snowflake_account_name}"
+EOF
+chmod 0644 /etc/profile.d/snowflake-test.sh
+
+# --- ensure SSM agent is installed/running (AL2023 has it; Ubuntu may not) ---
+if systemctl list-unit-files | grep -q '^amazon-ssm-agent\.service'; then
+  systemctl enable amazon-ssm-agent
+  systemctl restart amazon-ssm-agent
+else
+  if command -v dnf >/dev/null 2>&1; then
+    dnf -y install amazon-ssm-agent || true
+  elif command -v apt-get >/dev/null 2>&1; then
+    snap install amazon-ssm-agent --classic || apt-get install -y amazon-ssm-agent || true
+  fi
+  systemctl enable amazon-ssm-agent || true
+  systemctl restart amazon-ssm-agent || true
+fi
+
+echo "Bootstrap complete. Activate venv with: source $${VENV_DIR}/bin/activate"
+echo "Run test with: $${TEST_SCRIPT}"

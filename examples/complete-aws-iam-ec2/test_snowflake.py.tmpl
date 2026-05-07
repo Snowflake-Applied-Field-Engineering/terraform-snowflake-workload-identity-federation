@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+"""
+Simple Snowflake WIF Test Script
+Tests Workload Identity Federation (WIF) connection from AWS EC2 to Snowflake
+"""
+import os
+import snowflake.connector
+
+def main():
+    print("Starting Snowflake WIF Connection Test...")
+    print(f"Snowflake Connector Version: {snowflake.connector.__version__}")
+
+    try:
+        # Enable Workload Identity Federation (WIF)
+        os.environ["SF_ENABLE_EXPERIMENTAL_AUTHENTICATION"] = "true"
+
+        # Connect to Snowflake using WIF
+        print("Attempting WIF connection...")
+        conn = snowflake.connector.connect(
+            account='${snowflake_organization_name}-${snowflake_account_name}',
+            authenticator='WORKLOAD_IDENTITY',
+            workload_identity_provider='AWS'  # Provider is optional since the driver is capable of auto discovering
+        )
+
+        print("WIF Connection established successfully!")
+
+        # Create a cursor
+        cur = conn.cursor()
+
+        # Set context (warehouse, database, schema)
+        print("Setting Snowflake context...")
+        ${context_setup}
+
+        # Execute test queries
+        print("\nExecuting test queries...")
+
+        # Basic timestamp query
+        cur.execute("SELECT current_timestamp()")
+        result = cur.fetchone()
+        print(f"  Current timestamp: {result[0]}")
+
+        # Identity verification query
+        cur.execute("SELECT current_user(), current_account(), current_role(), current_warehouse(), current_database(), current_schema()")
+        identity = cur.fetchone()
+
+        print(f"\n🎉 WIF Connection Successful!")
+        print(f"  User: {identity[0]}")
+        print(f"  Account: {identity[1]}")
+        print(f"  Role: {identity[2]}")
+        print(f"  Warehouse: {identity[3]}")
+        print(f"  Database: {identity[4]}")
+        print(f"  Schema: {identity[5]}")
+
+        # Test query on actual data (if available)
+        ${schema_test_query}
+
+        cur.close()
+        conn.close()
+        print("\n WIF test completed successfully! Connection and permissions verified.")
+
+    except Exception as e:
+        print(f"\n WIF Connection Failed: {str(e)}")
+        print("\nTroubleshooting tips:")
+        print("1. Verify AWS role has proper WIF trust relationship with Snowflake")
+        print("2. Check that Snowflake WIF user exists and is mapped to correct AWS role ARN")
+        print("3. Ensure EC2 instance is using the correct IAM role")
+        print("4. Verify network connectivity to Snowflake endpoints")
+        return 1
+
+    return 0
+
+if __name__ == "__main__":
+    exit(main())

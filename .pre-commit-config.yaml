@@ -1,0 +1,55 @@
+# Pre-commit hooks for Terraform
+# Install: pip install pre-commit
+# Setup: pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.88.0
+    hooks:
+      - id: terraform_fmt
+        name: Terraform fmt
+        description: Rewrites all Terraform configuration files to a canonical format
+
+      - id: terraform_validate
+        name: Terraform validate
+        description: Validates all Terraform configuration files
+
+      # Optional: Uncomment if you have terraform-docs installed
+      # - id: terraform_docs
+      #   name: Terraform docs
+      #   description: Inserts input and output documentation into README.md
+      #   args:
+      #     - --args=--lockfile=false
+
+      # Optional: Uncomment if you have tflint installed
+      # - id: terraform_tflint
+      #   name: Terraform tflint
+      #   description: Validates all Terraform configuration files with TFLint
+
+      # Optional: Uncomment if you have trivy installed (tfsec replacement)
+      # - id: terraform_trivy
+      #   name: Terraform trivy
+      #   description: Static analysis of Terraform templates to spot potential security issues
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        name: Trim trailing whitespace
+
+      - id: end-of-file-fixer
+        name: Fix end of files
+
+      - id: check-yaml
+        name: Check YAML
+
+      - id: check-added-large-files
+        name: Check for large files
+        args: ['--maxkb=1000']
+
+      - id: check-merge-conflict
+        name: Check for merge conflicts
+
+      - id: detect-private-key
+        name: Detect private keys

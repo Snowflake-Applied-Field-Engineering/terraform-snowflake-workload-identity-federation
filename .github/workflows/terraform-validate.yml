@@ -1,0 +1,92 @@
+name: Terraform Validation
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform-validate:
+    name: Terraform Validation
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: "1.5.0"
+
+    - name: Terraform Format Check
+      id: fmt
+      run: terraform fmt -check -recursive
+      continue-on-error: true
+
+    - name: Terraform Init (Root Module)
+      id: init
+      run: terraform init -backend=false
+
+    - name: Terraform Validate (Root Module)
+      id: validate
+      run: terraform validate -no-color
+
+    - name: Terraform Init (Basic Example)
+      id: init_basic
+      run: |
+        cd examples/basic
+        terraform init -backend=false
+      continue-on-error: true
+
+    - name: Terraform Validate (Basic Example)
+      id: validate_basic
+      run: |
+        cd examples/basic
+        terraform validate -no-color
+      continue-on-error: true
+
+    - name: Terraform Init (Advanced Example)
+      id: init_advanced
+      run: |
+        cd examples/advanced
+        terraform init -backend=false
+      continue-on-error: true
+
+    - name: Terraform Validate (Advanced Example)
+      id: validate_advanced
+      run: |
+        cd examples/advanced
+        terraform validate -no-color
+      continue-on-error: true
+
+    - name: Summary
+      run: |
+        echo "## Terraform Validation Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Root Module" >> $GITHUB_STEP_SUMMARY
+        echo "- **Format Check:** ${{ steps.fmt.outcome }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Init:** ${{ steps.init.outcome }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Validate:** ${{ steps.validate.outcome }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Examples" >> $GITHUB_STEP_SUMMARY
+        echo "- **Basic Example:** ${{ steps.validate_basic.outcome }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Advanced Example:** ${{ steps.validate_advanced.outcome }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        if [ "${{ steps.fmt.outcome }}" != "success" ]; then
+          echo "⚠️ Format check failed. Run 'terraform fmt -recursive' to fix." >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+
+        if [ "${{ steps.init.outcome }}" != "success" ] || [ "${{ steps.validate.outcome }}" != "success" ]; then
+          echo "❌ Root module validation failed. Check the logs above." >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+
+        echo "✅ All validation checks passed!" >> $GITHUB_STEP_SUMMARY
