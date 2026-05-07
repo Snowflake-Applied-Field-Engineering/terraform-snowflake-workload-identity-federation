@@ -48,7 +48,7 @@ terraform-module-template/
 ### 1. Create from Template
 
 **Option A: Via GitHub UI**
-1. Go to https://github.com/Snowflake-Applied-Field-Engineering/terraform-module-template
+1. Go to https://github.com/Snowflake-Labs/terraform-module-template
 2. Click "Use this template" button
 3. Name your new repository (e.g., `terraform-snowflake-database`)
 4. Clone your new repository
@@ -56,7 +56,7 @@ terraform-module-template/
 **Option B: Via Command Line**
 ```bash
 # Clone the template
-git clone https://github.com/Snowflake-Applied-Field-Engineering/terraform-module-template.git my-new-module
+git clone https://github.com/Snowflake-Labs/terraform-module-template.git my-new-module
 cd my-new-module
 
 # Remove git history and start fresh

@@ -13,7 +13,7 @@ This directory contains automated tests for the Terraform module.
 1. Install Go (>= 1.21)
 2. Initialize Go module:
    ```bash
-   go mod init github.com/Snowflake-Applied-Field-Engineering/terraform-module-template/tests
+   go mod init github.com/Snowflake-Labs/terraform-module-template/tests
    go get github.com/gruntwork-io/terratest/modules/terraform
    go get github.com/stretchr/testify/assert
    ```

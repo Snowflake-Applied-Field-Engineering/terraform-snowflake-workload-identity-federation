@@ -10,7 +10,7 @@ By participating in this project, you agree to maintain a respectful and collabo
 
 ### Reporting Issues
 
-1. Check if the issue already exists in the [Issues](https://github.com/Snowflake-Applied-Field-Engineering/terraform-module-template/issues) section
+1. Check if the issue already exists in the [Issues](https://github.com/Snowflake-Labs/terraform-module-template/issues) section
 2. If not, create a new issue with:
    - Clear title and description
    - Steps to reproduce (if applicable)
@@ -22,7 +22,7 @@ By participating in this project, you agree to maintain a respectful and collabo
 
 1. **Fork the repository**
    ```bash
-   git clone https://github.com/Snowflake-Applied-Field-Engineering/terraform-module-template.git
+   git clone https://github.com/Snowflake-Labs/terraform-module-template.git
    cd terraform-module-template
    ```
 
