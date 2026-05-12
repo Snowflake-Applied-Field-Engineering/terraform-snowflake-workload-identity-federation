@@ -1,0 +1,45 @@
+# Terraform Configuration Example for Snowflake WIF with GCP
+# Copy this file to terraform.tfvars and fill in your values
+
+## GCP Infrastructure
+gcp_project_id = "REPLACE_ME"
+gcp_region     = "REPLACE_ME"
+gcp_zone       = "REPLACE_ME"
+
+## Network Configuration (leave empty to create new)
+network_name    = "" # Or specify existing VPC name
+subnetwork_name = "" # Or specify existing subnetwork name
+subnet_cidr     = "10.20.0.0/24"
+
+## VM Configuration
+name_prefix  = "snow-tf-wif-test-gcp"
+machine_type = "e2-small"
+vm_image     = "debian-cloud/debian-13"
+
+# SSH Configuration (Either provide SSH key or use  password)
+ssh_public_key_path = "" # Or leave empty, and set enable_os_login to true
+enable_os_login     = false
+
+## Network Security
+enable_external_ip = true # Set to false if you have Cloud NAT / Private Google Access
+allow_ssh_from_iap = true # Enables `gcloud compute ssh --tunnel-through-iap`
+ssh_source_ranges  = []   # Optional additional CIDRs allowed to SSH
+
+## Snowflake Account Info
+snowflake_organization_name = "REPLACE_ME"
+snowflake_account_name      = "REPLACE_ME"
+
+## Snowflake Context for Testing (must already exist in Snowflake)
+wif_test_warehouse = "REPLACE_ME"
+wif_test_database  = "REPLACE_ME"
+wif_test_schema    = "REPLACE_ME"
+
+## Optional: Override the GCP service account unique_id used as Snowflake WIF subject
+# gcp_service_account_id = ""
+
+## Labels
+labels = {
+  environment = "test"
+  purpose     = "snowflake-wif-testing"
+  managed-by  = "terraform"
+}

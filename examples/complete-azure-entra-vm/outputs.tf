@@ -1,0 +1,103 @@
+# --- Azure outputs ---
+
+output "resource_group_name" {
+  description = "Name of the Azure resource group"
+  value       = azurerm_resource_group.this.name
+}
+
+output "vm_id" {
+  description = "ID of the Azure VM"
+  value       = azurerm_linux_virtual_machine.this.id
+}
+
+output "vm_name" {
+  description = "Name of the Azure VM"
+  value       = azurerm_linux_virtual_machine.this.name
+}
+
+output "vm_private_ip" {
+  description = "Private IP address of the Azure VM"
+  value       = azurerm_network_interface.this.private_ip_address
+}
+
+output "vm_public_ip" {
+  description = "Public IP address of the Azure VM (if enabled)"
+  value       = var.enable_public_ip ? azurerm_public_ip.this[0].ip_address : null
+}
+
+output "managed_identity_principal_id" {
+  description = "Principal ID (Object ID) of the user-assigned managed identity"
+  value       = azurerm_user_assigned_identity.this.principal_id
+}
+
+output "managed_identity_client_id" {
+  description = "Client ID (Application ID) of the user-assigned managed identity"
+  value       = azurerm_user_assigned_identity.this.client_id
+}
+
+output "managed_identity_id" {
+  description = "Resource ID of the user-assigned managed identity"
+  value       = azurerm_user_assigned_identity.this.id
+}
+
+output "ssh_private_key" {
+  description = "Generated SSH private key (if SSH key was auto-generated)"
+  value       = var.ssh_public_key_path == "" && var.admin_password == null ? tls_private_key.ssh[0].private_key_pem : "Not generated - using provided key or password"
+  sensitive   = true
+}
+
+output "azure_cli_ssh_command" {
+  description = "Azure CLI command to SSH into the VM"
+  value       = "az ssh vm -n ${azurerm_linux_virtual_machine.this.name} -g ${azurerm_resource_group.this.name}"
+}
+
+# --- Snowflake outputs ---
+
+output "snowflake_account_name" {
+  description = "Snowflake account locator used for provider/resources"
+  value       = var.snowflake_account_name
+}
+
+output "wif_azure_sp_id_effective" {
+  description = "Azure Service Principal (Application) ID mapped to the Snowflake WIF user"
+  value       = local.wif_azure_sp_id_effective
+}
+
+output "wif_test_role" {
+  description = "Snowflake role created for WIF testing"
+  value       = module.snowflake_wif_role.wif_role_name
+}
+
+# --- Convenience outputs ---
+
+output "z_test_instructions" {
+  description = "Instructions for testing the WIF connection"
+  value       = <<-EOT
+
+    === Snowflake WIF Test Instructions ===
+
+    1. Connect to the VM:
+       ${var.enable_public_ip ? "SSH: ssh ${var.admin_username}@${var.enable_public_ip ? azurerm_public_ip.this[0].ip_address : "N/A"}" : ""}
+       Azure CLI: az ssh vm -n ${azurerm_linux_virtual_machine.this.name} -g ${azurerm_resource_group.this.name}
+
+    2. Once connected, run:
+       sudo su -
+       cd /opt/snowflake-test
+       # Note: if /opt/snowflake-test/cloud-init-still-running.txt  exists, the cloud-init process is still running. Wait for it to finish.
+       source /opt/snowflake-test/venv/bin/activate
+       python3 /opt/snowflake-test/test_snowflake.py
+
+    3. The test script will:
+       - Use the VM's managed identity to obtain an Azure AD token
+       - Authenticate to Snowflake using WIF
+       - Execute test queries to verify connectivity
+
+    === Configuration Details ===
+    Snowflake Account: ${var.snowflake_organization_name}-${var.snowflake_account_name}
+    WIF User: ${module.snowflake_wif_role.wif_user_name}
+    WIF Role: ${module.snowflake_wif_role.wif_role_name}
+    Azure Tenant ID: ${var.azure_tenant_id}
+    Azure Application ID: ${local.wif_azure_sp_id_effective}
+
+  EOT
+}

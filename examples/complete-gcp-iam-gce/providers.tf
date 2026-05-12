@@ -1,3 +1,15 @@
+# Google Cloud Provider
+# Authenticate with one of:
+#   - `gcloud auth application-default login` (recommended for local development)
+#   - GOOGLE_APPLICATION_CREDENTIALS environment variable pointing to a key file
+#   - Workload Identity (when running from another GCP workload)
+# See https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/provider_reference
+provider "google" {
+  project = var.gcp_project_id
+  region  = var.gcp_region
+  zone    = var.gcp_zone
+}
+
 # Snowflake Provider
 # You must configure the provider through either environment variables or in the terraform configuration file below.
 # Environment variables keep the Terraform more portable, hardcoded (or variable-based) config makes it more declarative
@@ -7,7 +19,6 @@ provider "snowflake" {
   experimental_features_enabled = ["USER_ENABLE_DEFAULT_WORKLOAD_IDENTITY"]
 
   ### Authentication Options:
-  ## TODO examples for all
   # Option A: Environment Variables (current configuration)
   # Option B: Key-pair authentication
   # Option C: OAuth
@@ -21,14 +32,12 @@ provider "snowflake" {
   # export SNOWFLAKE_PRIVATE_KEY=$(cat ~/path/to/REPLACE_ME.p8)
   # export SNOWFLAKE_ROLE="REPLACE_ME"
   # export SNOWFLAKE_USER="REPLACE_ME"
-}
 
-## Option B: Key-pair authentication
-# provider "snowflake" {
-#   # organization_name = var.snowflake_organization_name
-#   # account_name      = var.snowflake_account_name
-#   # user              = var.snowflake_username
-#   # role              = var.snowflake_role
-#   # authenticator     = "SNOWFLAKE_JWT" # Requires private_key and corresponding public key setup
-#   # private_key       = file(var.snowflake_private_key_path)
-# }
+  ### Option B: Snowflake Terraform Profile
+  ## Configured in ~/.snowflake/config (Terraform-specific config that is similar to snowcli config)
+  ## See https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs#toml-file for more details
+  ## Then uncomment the line below and update with your profile name.
+  # profile = "MY_SNOWFLAKE_PROFILE"
+
+  ## Other methods are available, see https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs#authentication for more details.
+}

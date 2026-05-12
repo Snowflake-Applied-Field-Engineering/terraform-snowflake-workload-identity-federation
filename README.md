@@ -57,6 +57,7 @@ No modules.
 | Name | Description |
 | ---- | ----------- |
 | <a name="output_wif_role_name"></a> [wif\_role\_name](#output\_wif\_role\_name) | Name of the Snowflake role created for WIF. |
+| <a name="output_wif_user_name"></a> [wif\_user\_name](#output\_wif\_user\_name) | Name of the Snowflake service user created for WIF. |
 <!-- END_TF_DOCS -->
 
 ## Development

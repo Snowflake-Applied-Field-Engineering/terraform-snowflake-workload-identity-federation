@@ -37,7 +37,7 @@ resource "snowflake_service_user" "wif" {
   }
 
   dynamic "default_workload_identity" {
-    for_each = var.wif_type == "gcp " ? [1] : []
+    for_each = var.wif_type == "gcp" ? [1] : []
     content {
       gcp {
         subject = var.gcp_service_account_id
