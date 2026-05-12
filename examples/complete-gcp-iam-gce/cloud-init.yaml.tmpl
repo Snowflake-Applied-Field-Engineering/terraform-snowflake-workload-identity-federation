@@ -1,0 +1,92 @@
+#cloud-config
+# Cloud-init configuration for GCE VM
+# Sets up Python environment and Snowflake WIF test script.
+#
+# On GCE, cloud-init reads user-data from the `user-data` instance metadata key.
+# See https://cloudinit.readthedocs.io/en/latest/reference/datasources/gce.html
+
+# Create the admin user and authorize the SSH key directly via cloud-init.
+# This is in addition to the `ssh-keys` instance metadata entry: we want SSH
+# to work even on images whose default user differs from ${admin_username}.
+# `default` is included so cloud-init still creates the image's default user.
+users:
+  - default
+  - name: ${admin_username}
+    gecos: Snowflake WIF test admin
+    groups: sudo
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+%{ if ssh_authorized_key != "" ~}
+    ssh_authorized_keys:
+      - ${ssh_authorized_key}
+%{ endif ~}
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - python3
+  - python3-pip
+  - python3-venv
+  - jq
+  - git
+  - ca-certificates
+  - curl
+
+write_files:
+  - path: /opt/snowflake-test/cloud-init-still-running.txt
+    permissions: '0755'
+    content: |
+      Cloud-init is still running. Please wait...
+  - path: /opt/snowflake-test/test_snowflake.py
+    permissions: '0755'
+    content: |
+      ${indent(6, test_script)}
+
+  - path: /usr/local/bin/test-snowflake-wif
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      # export SNOWFLAKE_DEFAULT_AUTHENTICATOR="${snowflake_default_authenticator}"
+      # export SNOWFLAKE_ACCOUNT="${snowflake_default_account}"
+      source /opt/snowflake-test/venv/bin/activate
+      python3 /opt/snowflake-test/test_snowflake.py
+
+  - path: /etc/profile.d/snowflake-test.sh
+    permissions: '0644'
+    content: |
+      export SNOWFLAKE_DEFAULT_AUTHENTICATOR="${snowflake_default_authenticator}"
+      export SNOWFLAKE_ACCOUNT="${snowflake_default_account}"
+
+runcmd:
+  # Create and activate virtual environment
+  - python3 -m venv /opt/snowflake-test/venv
+  - /opt/snowflake-test/venv/bin/pip install --upgrade pip
+
+  # Install Snowflake connector. GCE attestation is fetched from the
+  # metadata server by the connector itself; no extra Google client lib needed.
+  - /opt/snowflake-test/venv/bin/pip install "snowflake-connector-python>=3.17"
+
+  # Fix permissions
+  - chown -R 1000:1000 /opt/snowflake-test
+
+  # Remove the cloud-init-still-running.txt file to indicate that cloud-init has finished
+  - rm /opt/snowflake-test/cloud-init-still-running.txt
+
+final_message: |
+  ========================================
+  Snowflake WIF Test Environment Ready
+  ========================================
+
+  To test the WIF connection:
+  1. test-snowflake-wif
+
+  Or manually:
+  1. source /opt/snowflake-test/venv/bin/activate
+  2. python3 /opt/snowflake-test/test_snowflake.py
+
+  Configuration:
+  - Snowflake Account: ${snowflake_default_account}
+  - Authenticator:     ${snowflake_default_authenticator}
+
+  ========================================
