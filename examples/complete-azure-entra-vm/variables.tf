@@ -87,17 +87,11 @@ variable "os_image" {
     version   = string
   })
   default = {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts-gen2"
+    publisher = "debian"
+    offer     = "debian-13"
+    sku       = "13"
     version   = "latest"
   }
-  # default = {
-  #   publisher = "debian"
-  #   offer     = "debian-13"
-  #   sku       = "13"
-  #   version   = "latest"
-  # }
 }
 
 variable "enable_public_ip" {

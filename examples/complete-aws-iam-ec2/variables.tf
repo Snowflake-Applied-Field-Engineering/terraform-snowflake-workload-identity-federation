@@ -3,9 +3,9 @@
 ################################################################################
 
 variable "name_prefix" {
-  description = "Prefix to apply to resource names"
+  description = "Prefix to apply to resource names. Note that hyphens will be replaced with underscores for Snowflake role and user names."
   type        = string
-  default     = "snow_tf_wif_test"
+  default     = "snow-tf-wif-test-aws"
 }
 
 ################################################################################
@@ -63,17 +63,17 @@ variable "snowflake_organization_name" {
 variable "wif_test_warehouse" {
   description = "Warehouse for the WIF test user/role (must exist)"
   type        = string
-  default     = null
+  # default     = null
 }
 
 variable "wif_test_database" {
   description = "Database to test privileges of the WIF test user/role(must exist)"
   type        = string
-  default     = null
+  # default     = null
 }
 
 variable "wif_test_schema" {
   description = "Schema to test privileges of the WIF test user/role(must exist)"
   type        = string
-  default     = null
+  # default     = null
 }

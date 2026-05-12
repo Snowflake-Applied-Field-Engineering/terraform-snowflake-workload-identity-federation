@@ -3,18 +3,17 @@
 # Environment variables keep the Terraform more portable, hardcoded (or variable-based) config makes it more declarative
 # For more details, see https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs
 
-## Authentication Options:
-## TODO examples for all
-# Option A: Environment Variables (current configuration)
-# Option B: Key-pair authentication
-# Option C: OAuth
-# Option D: Snowflake Terraform Profile
-
-# TODO pick how want to handle this by default
-
-# Option A: Environment Variables (current configuration)
 provider "snowflake" {
   experimental_features_enabled = ["USER_ENABLE_DEFAULT_WORKLOAD_IDENTITY"]
+
+  ### Authentication Options:
+  ## TODO examples for all
+  # Option A: Environment Variables (current configuration)
+  # Option B: Key-pair authentication
+  # Option C: OAuth
+  # Option D: Snowflake Terraform Profile
+
+  ### Option A: Environment Variables (current configuration)
   ## Substitute in the appropriate values for the environment variables and run the following in your terminal:
   # export SNOWFLAKE_ACCOUNT_NAME="REPLACE_ME"
   # export SNOWFLAKE_AUTHENTICATOR="SNOWFLAKE_JWT" # For Key-pair authentication

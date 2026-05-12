@@ -13,6 +13,7 @@ locals {
       snowflake_account_name      = var.snowflake_account_name
       azure_tenant_id             = var.azure_tenant_id
       azure_client_id             = local.wif_azure_sp_id_effective
+      # TODO why is this so complicated?
       context_setup = join("\n        ", compact([
         var.wif_default_warehouse != null ? "cur.execute(\"USE WAREHOUSE ${var.wif_default_warehouse}\")\n        print(\"  ✅ Using warehouse: ${var.wif_default_warehouse}\")" : null,
         var.wif_test_database != null ? "cur.execute(\"USE DATABASE ${var.wif_test_database}\")\n        print(\"  ✅ Using database: ${var.wif_test_database}\")" : null,
