@@ -55,9 +55,9 @@ This example creates:
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
-| <a name="requirement_snowflake"></a> [snowflake](#requirement\_snowflake) | ~>2.13.0 |
+| <a name="requirement_snowflake"></a> [snowflake](#requirement\_snowflake) | >= 2.13.0, < 2.16 |
 
 ## Providers
 
@@ -66,7 +66,7 @@ No providers.
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_wif_aws"></a> [wif\_aws](#module\_wif\_aws) | ../../ | n/a |
 
 ## Resources

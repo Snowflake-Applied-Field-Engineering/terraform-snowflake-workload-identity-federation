@@ -1,7 +1,7 @@
 module "wif_aws" {
   source = "../../"
 
-  # Update aws_role_arn and wif_default_warehouse (must already exist!)
+  # Update aws_role_arn and wif_user_default_warehouse (must already exist!)
   # Optionally update wif_role_name and wif_user_name to change how the new resources are named.
 
   wif_type     = "aws"
