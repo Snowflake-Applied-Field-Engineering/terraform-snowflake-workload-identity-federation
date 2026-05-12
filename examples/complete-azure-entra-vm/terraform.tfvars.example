@@ -19,7 +19,7 @@ vm_size        = "Standard_B2s"
 admin_username = "azureuser"
 
 # SSH Configuration (provide either SSH key or password)
-ssh_public_key_path = "~/.ssh/id_rsa.pub"       # Or leave empty for auto-generated key
+ssh_public_key_path = "~/.ssh/id_rsa.pub" # Or leave empty for auto-generated key
 # admin_password    = "YourSecurePassword123!"  # Uncomment if not using SSH key
 
 # Network Security
@@ -32,9 +32,9 @@ snowflake_organization_name = "your_org_name"
 snowflake_account_name      = "your_account_name"
 
 # Optional: Snowflake Context for Testing
-wif_default_warehouse = "COMPUTE_WH"  # Must exist in Snowflake
-wif_test_database     = "TEST_DB"     # Must exist in Snowflake
-wif_test_schema       = "PUBLIC"      # Must exist in Snowflake
+wif_test_warehouse = "COMPUTE_WH" # Must exist in Snowflake
+wif_test_database  = "TEST_DB"    # Must exist in Snowflake
+wif_test_schema    = "PUBLIC"     # Must exist in Snowflake
 
 # Optional: Override Azure Service Principal ID
 # azure_service_principal_id = "your-custom-sp-id"  # Leave empty to use managed identity

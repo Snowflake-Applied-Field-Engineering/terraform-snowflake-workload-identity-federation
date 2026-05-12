@@ -165,7 +165,7 @@ variable "snowflake_account_name" {
 # }
 
 # Optional Snowflake Context for Testing
-variable "wif_default_warehouse" {
+variable "wif_test_warehouse" {
   description = "Default warehouse for the WIF test user/role (must exist)"
   type        = string
   default     = null

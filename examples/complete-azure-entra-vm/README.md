@@ -118,7 +118,7 @@ snowflake_private_key_path  = "/path/to/snowflake_rsa_key.p8"
 # WIF Test Resources
 wif_user_name         = "WIF_TEST_USER"
 wif_role_name         = "WIF_TEST_ROLE"
-wif_default_warehouse = "COMPUTE_WH"
+wif_test_warehouse    = "COMPUTE_WH"
 wif_test_database     = "TEST_DB"
 wif_test_schema       = "PUBLIC"
 ```
@@ -544,9 +544,9 @@ For issues or questions:
 | <a name="input_vm_size"></a> [vm\_size](#input\_vm\_size) | Azure VM size | `string` | `"Standard_B2s"` | no |
 | <a name="input_vnet_address_space"></a> [vnet\_address\_space](#input\_vnet\_address\_space) | Address space for VNet if creating new (CIDR notation) | `list(string)` | <pre>[<br/>  "10.0.0.0/16"<br/>]</pre> | no |
 | <a name="input_vnet_name"></a> [vnet\_name](#input\_vnet\_name) | Name of existing VNet (leave empty to create new) | `string` | `""` | no |
-| <a name="input_wif_default_warehouse"></a> [wif\_default\_warehouse](#input\_wif\_default\_warehouse) | Default warehouse for the WIF test user/role (must exist) | `string` | `null` | no |
 | <a name="input_wif_test_database"></a> [wif\_test\_database](#input\_wif\_test\_database) | Database to test privileges of the WIF test user/role (must exist) | `string` | `null` | no |
 | <a name="input_wif_test_schema"></a> [wif\_test\_schema](#input\_wif\_test\_schema) | Schema to test privileges of the WIF test user/role (must exist) | `string` | `null` | no |
+| <a name="input_wif_test_warehouse"></a> [wif\_test\_warehouse](#input\_wif\_test\_warehouse) | Default warehouse for the WIF test user/role (must exist) | `string` | `null` | no |
 
 ## Outputs
 

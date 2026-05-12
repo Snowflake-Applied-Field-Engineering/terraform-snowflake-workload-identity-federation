@@ -15,7 +15,7 @@ locals {
       azure_client_id             = local.wif_azure_sp_id_effective
       # TODO why is this so complicated?
       context_setup = join("\n        ", compact([
-        var.wif_default_warehouse != null ? "cur.execute(\"USE WAREHOUSE ${var.wif_default_warehouse}\")\n        print(\"  ✅ Using warehouse: ${var.wif_default_warehouse}\")" : null,
+        var.wif_test_warehouse != null ? "cur.execute(\"USE WAREHOUSE ${var.wif_test_warehouse}\")\n        print(\"  ✅ Using warehouse: ${var.wif_test_warehouse}\")" : null,
         var.wif_test_database != null ? "cur.execute(\"USE DATABASE ${var.wif_test_database}\")\n        print(\"  ✅ Using database: ${var.wif_test_database}\")" : null,
         var.wif_test_schema != null ? "cur.execute(\"USE SCHEMA ${var.wif_test_schema}\")\n        print(\"  ✅ Using schema: ${var.wif_test_schema}\")" : null
       ]))
@@ -71,7 +71,7 @@ module "snowflake_wif_role" {
 
   wif_role_name              = replace(upper("${var.name_prefix}_ROLE"), "-", "_")
   wif_user_name              = replace(upper("${var.name_prefix}_USER"), "-", "_")
-  wif_user_default_warehouse = var.wif_default_warehouse
+  wif_user_default_warehouse = var.wif_test_warehouse
 
   wif_role_permissions = {
     my_db = {
@@ -86,7 +86,7 @@ module "snowflake_wif_role" {
     }
     my_warehouse = {
       type        = "warehouse"
-      name        = var.wif_default_warehouse
+      name        = var.wif_test_warehouse
       permissions = ["USAGE"]
     }
   }
