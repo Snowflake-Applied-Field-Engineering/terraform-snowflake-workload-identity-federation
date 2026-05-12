@@ -1,7 +1,6 @@
 ################################################################################
 # Locals
 ################################################################################
-# locals.tf
 
 locals {
   # Render the cloud-init configuration from the template file.
@@ -43,12 +42,6 @@ locals {
     var.tags
   )
 }
-
-################################################################################
-# Data Sources
-################################################################################
-
-# data "aws_region" "current" {}
 
 ################################################################################
 # Main
@@ -268,10 +261,3 @@ resource "tls_private_key" "ssh" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
-
-
-# module "azure_vm" {
-#   source  = "Azure/avm-res-compute-virtualmachine/azurerm"
-#   version = "0.20.0"
-#   # insert the 5 required variables here
-# }

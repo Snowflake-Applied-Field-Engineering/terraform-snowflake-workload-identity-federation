@@ -129,41 +129,6 @@ variable "snowflake_account_name" {
   type        = string
 }
 
-# variable "snowflake_role" {
-#   description = "Default role to use when applying Terraform resources in Snowflake"
-#   type        = string
-# }
-
-# variable "snowflake_username" {
-#   description = "Default user to use when applying Terraform resources in Snowflake"
-#   type        = string
-# }
-
-# variable "snowflake_private_key_path" {
-#   description = "Path to the PKCS#8 private key for Snowflake authentication"
-#   type        = string
-# }
-
-# variable "snowflake_private_key_passphrase" {
-#   description = "Passphrase for the private key (if encrypted)"
-#   type        = string
-#   sensitive   = true
-#   default     = ""
-# }
-
-# # Snowflake WIF Identity Objects
-# variable "wif_user_name" {
-#   description = "Name of the Snowflake WIF test user (e.g., WIF_TEST_USER)"
-#   type        = string
-#   default     = "WIF_TEST_USER"
-# }
-
-# variable "wif_role_name" {
-#   description = "Name of the WIF test role"
-#   type        = string
-#   default     = "WIF_TEST_ROLE"
-# }
-
 # Optional Snowflake Context for Testing
 variable "wif_test_warehouse" {
   description = "Default warehouse for the WIF test user/role (must exist)"

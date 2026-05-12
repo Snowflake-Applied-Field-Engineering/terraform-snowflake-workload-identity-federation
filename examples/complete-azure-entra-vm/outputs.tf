@@ -1,5 +1,3 @@
-# outputs.tf
-
 # --- Azure outputs ---
 
 output "resource_group_name" {
@@ -48,15 +46,6 @@ output "ssh_private_key" {
   sensitive   = true
 }
 
-# output "ssh_connection_command" { # TODO: this outputs sensitive data. Either allow or remove.
-#   description = "Command to SSH into the VM (if public IP is enabled)"
-#   value = var.enable_public_ip ? (
-#     var.ssh_public_key_path != "" || var.admin_password == null ?
-#     "ssh -i <your-private-key> ${var.admin_username}@${azurerm_public_ip.this[0].ip_address}" :
-#     "Use Azure Portal or az ssh vm command"
-#   ) : "No public IP - use Azure Bastion or private network access"
-# }
-
 output "azure_cli_ssh_command" {
   description = "Azure CLI command to SSH into the VM"
   value       = "az ssh vm -n ${azurerm_linux_virtual_machine.this.name} -g ${azurerm_resource_group.this.name}"
@@ -69,31 +58,15 @@ output "snowflake_account_name" {
   value       = var.snowflake_account_name
 }
 
-# output "snowflake_role_used" {
-#   description = "Snowflake role leveraged by Terraform when applying resources"
-#   value       = var.snowflake_role
-# }
-
 output "wif_azure_sp_id_effective" {
   description = "Azure Service Principal (Application) ID mapped to the Snowflake WIF user"
   value       = local.wif_azure_sp_id_effective
 }
 
-# output "wif_azure_tenant_id" {
-#   description = "Azure AD Tenant ID used for WIF configuration"
-#   value       = local.wif_azure_tenant_id
-# }
-
 output "wif_test_role" {
   description = "Snowflake role created for WIF testing"
   value       = module.snowflake_wif_role.wif_role_name
 }
-
-# output "wif_test_user" {
-#   description = "Snowflake WIF user created via WORKLOAD_IDENTITY"
-#   value       = module.snowflake_wif_role.wif_user_name
-# }
-
 
 # --- Convenience outputs ---
 
