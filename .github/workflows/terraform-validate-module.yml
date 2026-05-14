@@ -1,0 +1,49 @@
+name: Terraform Validation (Module)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-module:
+    name: Validate Root Module
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5.7"
+
+      - name: Terraform Format Check
+        id: fmt
+        run: terraform fmt -check -recursive
+        continue-on-error: true
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        run: terraform validate -no-color
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Root Module Validation"
+            echo "- Format check: ${{ steps.fmt.outcome }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.fmt.outcome }}" != "success" ]; then
+            echo "Run 'terraform fmt -recursive' to fix formatting." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
