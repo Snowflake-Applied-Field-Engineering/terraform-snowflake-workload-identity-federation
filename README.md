@@ -1,6 +1,7 @@
 # Snowflake Workload Identity Federation terraform Module
 
-[![Terraform Validation](https://github.com/Snowflake-Labs/terraform-snowflake-workload-identity-federation/actions/workflows/terraform-validate.yml/badge.svg)](https://github.com/Snowflake-Labs/terraform-snowflake-workload-identity-federation/actions/workflows/terraform-validate.yml)
+[![Terraform Validation: Module](https://github.com/Snowflake-Labs/terraform-snowflake-workload-identity-federation/actions/workflows/terraform-validate-module.yml/badge.svg?branch=main)](https://github.com/Snowflake-Labs/terraform-snowflake-workload-identity-federation/actions/workflows/terraform-validate-module.yml)
+[![Terraform Validation: Examples](https://github.com/Snowflake-Labs/terraform-snowflake-workload-identity-federation/actions/workflows/terraform-validate-examples.yml/badge.svg?branch=main)](https://github.com/Snowflake-Labs/terraform-snowflake-workload-identity-federation/actions/workflows/terraform-validate-examples.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 This module provides a composable method to configure Workload Identity Federation for Snowflake.

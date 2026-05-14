@@ -1,0 +1,45 @@
+name: Terraform Validation (Examples)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-example:
+    name: Validate ${{ matrix.example }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        example:
+          - basic-aws-existing-role
+          - complete-aws-iam-ec2
+          - complete-azure-entra-vm
+          - complete-gcp-iam-gce
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5.0"
+
+      - name: Verify example directory exists
+        run: test -d "examples/${{ matrix.example }}" || { echo "::error::Missing examples/${{ matrix.example }}"; exit 1; }
+
+      - name: Terraform Init
+        working-directory: examples/${{ matrix.example }}
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        working-directory: examples/${{ matrix.example }}
+        run: terraform validate -no-color
