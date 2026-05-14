@@ -31,7 +31,7 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.5.0"
+          terraform_version: "1.5.7"
 
       - name: Verify example directory exists
         run: test -d "examples/${{ matrix.example }}" || { echo "::error::Missing examples/${{ matrix.example }}"; exit 1; }
